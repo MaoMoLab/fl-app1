@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'login_page.dart';
+import 'version_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
       routes: {
         '/login': (context) => const LoginPage(),
+        '/version': (context) => const VersionPage(),
       },
     );
   }
@@ -118,6 +120,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: () => Navigator.of(context).pushNamed('/login'),
               child: const Text('打开登录页面'),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pushNamed('/version'),
+              child: const Text('查看 /v1/version'),
             ),
           ],
         ),

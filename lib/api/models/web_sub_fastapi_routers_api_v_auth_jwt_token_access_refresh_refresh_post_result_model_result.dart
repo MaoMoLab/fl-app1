@@ -15,10 +15,12 @@ class WebSubFastapiRoutersApiVAuthJwtTokenAccessRefreshRefreshPostResultModelRes
   });
 
   factory WebSubFastapiRoutersApiVAuthJwtTokenAccessRefreshRefreshPostResultModelResult.fromJson(
-      Map<String, Object?> json) =>
+    Map<String, Object?> json,
+  ) =>
       _$WebSubFastapiRoutersApiVAuthJwtTokenAccessRefreshRefreshPostResultModelResultFromJson(
-          json);
-  
+        json,
+      );
+
   /// 访问令牌
   @JsonKey(name: 'access_token')
   final String accessToken;
@@ -33,5 +35,6 @@ class WebSubFastapiRoutersApiVAuthJwtTokenAccessRefreshRefreshPostResultModelRes
 
   Map<String, Object?> toJson() =>
       _$WebSubFastapiRoutersApiVAuthJwtTokenAccessRefreshRefreshPostResultModelResultToJson(
-          this);
+        this,
+      );
 }

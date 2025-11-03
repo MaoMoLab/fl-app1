@@ -16,10 +16,12 @@ class WebSubFastapiRoutersApiVAdminApiReplaceUserEmailReplaceEmailResponseResult
   });
 
   factory WebSubFastapiRoutersApiVAdminApiReplaceUserEmailReplaceEmailResponseResult.fromJson(
-      Map<String, Object?> json) =>
+    Map<String, Object?> json,
+  ) =>
       _$WebSubFastapiRoutersApiVAdminApiReplaceUserEmailReplaceEmailResponseResultFromJson(
-          json);
-  
+        json,
+      );
+
   /// 用户ID
   @JsonKey(name: 'user_id')
   final int userId;
@@ -38,5 +40,6 @@ class WebSubFastapiRoutersApiVAdminApiReplaceUserEmailReplaceEmailResponseResult
 
   Map<String, Object?> toJson() =>
       _$WebSubFastapiRoutersApiVAdminApiReplaceUserEmailReplaceEmailResponseResultToJson(
-          this);
+        this,
+      );
 }

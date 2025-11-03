@@ -16,10 +16,12 @@ class WebSubFastapiRoutersApiVUserWalletRechargeIndexUserWalletRechargeResultRes
   });
 
   factory WebSubFastapiRoutersApiVUserWalletRechargeIndexUserWalletRechargeResultResult.fromJson(
-      Map<String, Object?> json) =>
+    Map<String, Object?> json,
+  ) =>
       _$WebSubFastapiRoutersApiVUserWalletRechargeIndexUserWalletRechargeResultResultFromJson(
-          json);
-  
+        json,
+      );
+
   /// 创建时间，查询的时间
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
@@ -30,5 +32,6 @@ class WebSubFastapiRoutersApiVUserWalletRechargeIndexUserWalletRechargeResultRes
 
   Map<String, Object?> toJson() =>
       _$WebSubFastapiRoutersApiVUserWalletRechargeIndexUserWalletRechargeResultResultToJson(
-          this);
+        this,
+      );
 }

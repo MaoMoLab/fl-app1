@@ -4635,6 +4635,50 @@ class _FallbackClient implements FallbackClient {
   }
 
   @override
+  Future<void> patchUserV2ApiV2LowAdminApiUserV2UserIdPatch({
+    required int userId,
+    required ParamModelPatch body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<void>(
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/user_v2/${userId}',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
+  Future<void> getUserV2ApiV2LowAdminApiUserV2UserIdGet({
+    required int userId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<void>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/user_v2/${userId}',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
   Future<CaptchaKeyModel> getCaptchaKeyApiV2CaptchaKeyGet({
     required CaptchaKeyTypeEnum captchaKeyType,
   }) async {

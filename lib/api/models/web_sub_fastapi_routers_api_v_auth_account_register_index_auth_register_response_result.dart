@@ -17,10 +17,12 @@ class WebSubFastapiRoutersApiVAuthAccountRegisterIndexAuthRegisterResponseResult
   });
 
   factory WebSubFastapiRoutersApiVAuthAccountRegisterIndexAuthRegisterResponseResult.fromJson(
-      Map<String, Object?> json) =>
+    Map<String, Object?> json,
+  ) =>
       _$WebSubFastapiRoutersApiVAuthAccountRegisterIndexAuthRegisterResponseResultFromJson(
-          json);
-  
+        json,
+      );
+
   /// 访问令牌
   @JsonKey(name: 'access_token')
   final String accessToken;
@@ -42,5 +44,6 @@ class WebSubFastapiRoutersApiVAuthAccountRegisterIndexAuthRegisterResponseResult
 
   Map<String, Object?> toJson() =>
       _$WebSubFastapiRoutersApiVAuthAccountRegisterIndexAuthRegisterResponseResultToJson(
-          this);
+        this,
+      );
 }

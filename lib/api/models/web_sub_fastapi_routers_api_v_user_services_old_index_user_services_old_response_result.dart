@@ -16,10 +16,12 @@ class WebSubFastapiRoutersApiVUserServicesOldIndexUserServicesOldResponseResult 
   });
 
   factory WebSubFastapiRoutersApiVUserServicesOldIndexUserServicesOldResponseResult.fromJson(
-      Map<String, Object?> json) =>
+    Map<String, Object?> json,
+  ) =>
       _$WebSubFastapiRoutersApiVUserServicesOldIndexUserServicesOldResponseResultFromJson(
-          json);
-  
+        json,
+      );
+
   /// 服务总数
   @JsonKey(name: 'total_count')
   final int totalCount;
@@ -29,5 +31,6 @@ class WebSubFastapiRoutersApiVUserServicesOldIndexUserServicesOldResponseResult 
 
   Map<String, Object?> toJson() =>
       _$WebSubFastapiRoutersApiVUserServicesOldIndexUserServicesOldResponseResultToJson(
-          this);
+        this,
+      );
 }

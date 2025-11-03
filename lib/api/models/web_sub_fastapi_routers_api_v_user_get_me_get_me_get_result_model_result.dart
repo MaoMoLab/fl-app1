@@ -19,10 +19,11 @@ class WebSubFastapiRoutersApiVUserGetMeGetMeGetResultModelResult {
   });
 
   factory WebSubFastapiRoutersApiVUserGetMeGetMeGetResultModelResult.fromJson(
-      Map<String, Object?> json) =>
-      _$WebSubFastapiRoutersApiVUserGetMeGetMeGetResultModelResultFromJson(
-          json);
-  
+    Map<String, Object?> json,
+  ) => _$WebSubFastapiRoutersApiVUserGetMeGetMeGetResultModelResultFromJson(
+    json,
+  );
+
   /// 用户ID
   @JsonKey(name: 'user_id')
   final int userId;

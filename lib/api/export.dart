@@ -43,6 +43,7 @@ export 'models/node_config.dart';
 export 'models/node_info.dart';
 export 'models/old_service_info.dart';
 export 'models/old_service_shop.dart';
+export 'models/param_model_patch.dart';
 export 'models/post_add_alive_ip_data_model.dart';
 export 'models/post_add_alive_ip_model.dart';
 export 'models/post_add_detect_log_data_model.dart';
@@ -170,4 +171,3 @@ export 'models/web_sub_fastapi_routers_v_casino_function_sql_table_enum.dart';
 export 'models/web_sub_fastapi_routers_v_emby_function_sql_table_enum.dart';
 // Root client
 export 'rest_client.dart';
-

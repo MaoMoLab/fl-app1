@@ -26,7 +26,8 @@ class UserAccountActivityResponse {
   final String message;
 
   /// 用户活动信息
-  final WebSubFastapiRoutersApiVUserAccountActivityUserAccountActivityResponseResult result;
+  final WebSubFastapiRoutersApiVUserAccountActivityUserAccountActivityResponseResult
+  result;
 
   Map<String, Object?> toJson() => _$UserAccountActivityResponseToJson(this);
 }

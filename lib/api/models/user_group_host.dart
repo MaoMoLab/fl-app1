@@ -10,13 +10,11 @@ part 'user_group_host.g.dart';
 
 @JsonSerializable()
 class UserGroupHost {
-  const UserGroupHost({
-    required this.userGroupHost,
-  });
+  const UserGroupHost({required this.userGroupHost});
 
   factory UserGroupHost.fromJson(Map<String, Object?> json) =>
       _$UserGroupHostFromJson(json);
-  
+
   @JsonKey(name: 'user_group_host')
   final Map<String, SsNodeUserGroupHostDict> userGroupHost;
 

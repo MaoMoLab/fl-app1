@@ -10,7 +10,7 @@ import 'api/rest_client.dart';
 /// 说明/假设：默认 baseUrl 为 http://127.0.0.1:8000（常见 FastAPI 本地地址），
 /// 可以在页面里修改并点击“Fetch”来请求其他地址。
 class VersionPage extends StatefulWidget {
-  const VersionPage({Key? key}) : super(key: key);
+  const VersionPage({super.key});
 
   @override
   State<VersionPage> createState() => _VersionPageState();
@@ -51,7 +51,7 @@ class _VersionPageState extends State<VersionPage> {
 
       setState(() {
         _result =
-            'Request: ${dio.options.baseUrl}/v1/version\n\n' +
+            'Request: ${dio.options.baseUrl}/v1/version\n\n'
             'version: ${model.data}';
       });
     } on DioException catch (e) {

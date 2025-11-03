@@ -18,10 +18,12 @@ class WebSubFastapiRoutersApiVAdminApiAnnouncementAnnouncementResponseResult {
   });
 
   factory WebSubFastapiRoutersApiVAdminApiAnnouncementAnnouncementResponseResult.fromJson(
-      Map<String, Object?> json) =>
+    Map<String, Object?> json,
+  ) =>
       _$WebSubFastapiRoutersApiVAdminApiAnnouncementAnnouncementResponseResultFromJson(
-          json);
-  
+        json,
+      );
+
   /// 公告ID
   @JsonKey(name: 'announcement_id')
   final int announcementId;
@@ -48,5 +50,6 @@ class WebSubFastapiRoutersApiVAdminApiAnnouncementAnnouncementResponseResult {
 
   Map<String, Object?> toJson() =>
       _$WebSubFastapiRoutersApiVAdminApiAnnouncementAnnouncementResponseResultToJson(
-          this);
+        this,
+      );
 }

@@ -30,11 +30,8 @@ final GoRouter router = GoRouter(
       path: '/low_admin/user_v2/:id',
       name: 'user_v2',
       builder: (context, state) {
-        // Use dynamic access to be resilient against go_router API version differences
-        final dynamic s = state;
-        final idStr =
-            (s.params is Map ? s.params['id'] : null) ??
-            (s.pathParameters is Map ? s.pathParameters['id'] : null);
+        // Use typed access to avoid dynamic invocation of a missing `params` on some go_router versions
+        final idStr = state.pathParameters['id'];
         final id = int.tryParse(idStr?.toString() ?? '');
         if (id == null)
           return const Scaffold(body: Center(child: Text('invalid id')));

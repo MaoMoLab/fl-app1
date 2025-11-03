@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'auth/account_login/login_page.dart';
+import 'low_admin/user_v2.dart';
 import 'version_page.dart';
 
 void main() {
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginPage(),
         '/version': (context) => const VersionPage(),
+        '/low_admin/user_v2': (context) => const UserV2Page(),
       },
     );
   }

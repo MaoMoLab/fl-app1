@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:fl_app1/api/base_url.dart';
 import 'package:fl_app1/api/models/login_post_result_model.dart';
-import 'package:fl_app1/api/models/web_sub_fastapi_routers_api_v_auth_account_login_index_params_model.dart'
-    as api_models;
+import 'package:fl_app1/api/models/web_sub_fastapi_routers_api_v_auth_account_login_index_params_model.dart';
 import 'package:fl_app1/api/rest_client.dart';
 import 'package:flutter/material.dart';
 
@@ -95,17 +94,16 @@ class _LoginPageState extends State<LoginPage>
     final Dio dio = Dio(BaseOptions(baseUrl: kDefaultBaseUrl));
     final rest = RestClient(dio, baseUrl: kDefaultBaseUrl);
 
-    final body =
-        api_models.WebSubFastapiRoutersApiVAuthAccountLoginIndexParamsModel(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          captchaKey: _fixedCaptchaKey,
-          tiago2CapToken: _captchaToken!,
-          isRememberMe: _rememberMe,
-          twoFaCode: _twoFaController.text.isEmpty
-              ? null
-              : _twoFaController.text.trim(),
-        );
+    final body = WebSubFastapiRoutersApiVAuthAccountLoginIndexParamsModel(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      captchaKey: _fixedCaptchaKey,
+      tiago2CapToken: _captchaToken!,
+      isRememberMe: _rememberMe,
+      twoFaCode: _twoFaController.text.isEmpty
+          ? null
+          : _twoFaController.text.trim(),
+    );
 
     try {
       final LoginPostResultModel result = await rest.fallback
@@ -117,9 +115,7 @@ class _LoginPageState extends State<LoginPage>
 
       // Use API response to inform the user. If API reports failure, show its message.
       if (!result.isSuccess) {
-        final msg = result.message.isNotEmpty
-            ? result.message
-            : '登录失败，请稍后重试';
+        final msg = result.message.isNotEmpty ? result.message : '登录失败，请稍后重试';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(msg),
@@ -133,9 +129,11 @@ class _LoginPageState extends State<LoginPage>
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result.message.isNotEmpty
-              ? result.message
-              : '欢迎回来，${_emailController.text}'),
+          content: Text(
+            result.message.isNotEmpty
+                ? result.message
+                : '欢迎回来，${_emailController.text}',
+          ),
           backgroundColor: Colors.green,
         ),
       );

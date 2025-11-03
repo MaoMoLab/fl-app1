@@ -1,3 +1,7 @@
+import 'package:dio/dio.dart';
+import 'package:fl_app1/api/models/web_sub_fastapi_routers_api_v_auth_account_login_index_params_model.dart'
+    as api_models;
+import 'package:fl_app1/api/rest_client.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,6 +25,9 @@ class _LoginPageState extends State<LoginPage>
 
   late final AnimationController _shakeController;
   late final Animation<double> _shakeAnim;
+
+  // Fixed captcha_key as requested
+  static const String _fixedCaptchaKey = 'a9539556-9cbf-45e7-8ccd-db408ce6af33';
 
   @override
   void initState() {
@@ -81,19 +88,80 @@ class _LoginPageState extends State<LoginPage>
     }
 
     setState(() => _isLoggingIn = true);
-    // Simulate network login
-    await Future.delayed(const Duration(seconds: 1));
 
-    setState(() => _isLoggingIn = false);
+    // Default base URL - match VersionPage default
+    final baseUrl = 'http://127.0.0.1:8000';
+    final Dio dio = Dio(BaseOptions(baseUrl: baseUrl));
+    final rest = RestClient(dio, baseUrl: baseUrl);
 
-    // On success, show welcome and pop
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('欢迎回来，${_emailController.text}'),
-        backgroundColor: Colors.green,
-      ),
-    );
-    Navigator.of(context).pop();
+    final body =
+        api_models.WebSubFastapiRoutersApiVAuthAccountLoginIndexParamsModel(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          captchaKey: _fixedCaptchaKey,
+          tiago2CapToken: _captchaToken!,
+          isRememberMe: _rememberMe,
+          twoFaCode: _twoFaController.text.isEmpty
+              ? null
+              : _twoFaController.text.trim(),
+        );
+
+    try {
+      await rest.fallback.loginPostApiV2AuthAccountLoginLoginPost(body: body);
+
+      if (!mounted) return;
+
+      setState(() => _isLoggingIn = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('欢迎回来，${_emailController.text}'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pop();
+    } on DioException catch (e) {
+      setState(() => _isLoggingIn = false);
+
+      // Show error similar to VersionPage for debugging
+      final req = e.requestOptions;
+      final uri = req.uri.toString();
+      final type = e.type.name;
+      String message = e.message ?? e.toString();
+      final resp = e.response;
+      String respText = '';
+      if (resp != null) {
+        final body = resp.data;
+        try {
+          respText = body?.toString() ?? '<empty>';
+        } catch (_) {
+          respText = '<non-string response>';
+        }
+        message = 'HTTP ${resp.statusCode}\n$respText';
+      }
+
+      final sb = StringBuffer();
+      sb.writeln('DioException: $type');
+      sb.writeln('URI: $uri');
+      sb.writeln('Message: $message');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(sb.toString()),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (e, st) {
+      setState(() => _isLoggingIn = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$e\n\n$st'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    }
   }
 
   void _toggleCaptcha() {

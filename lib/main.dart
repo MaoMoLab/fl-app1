@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'auth/account_login/login_page.dart';
-import 'low_admin/user_v2.dart';
+import 'pages/auth/account_login/login_page.dart';
+import 'pages/low_admin/user_v2.dart';
 import 'version_page.dart';
 
 void main() {

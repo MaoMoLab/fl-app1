@@ -7,6 +7,7 @@ import 'pages/low_admin/low_admin_home.dart';
 import 'pages/low_admin/settings.dart';
 import 'pages/low_admin/user_v2.dart';
 import 'pages/low_admin/users_list.dart';
+import 'pages/user/dashboard.dart';
 import 'version_page.dart';
 
 /// 使用 go_router 的路由器实例
@@ -23,6 +24,11 @@ final GoRouter router = GoRouter(
       path: '/login',
       name: 'login',
       builder: (context, state) => const LoginPage(),
+    ),
+    GoRoute(
+      path: '/user/dashboard',
+      name: 'dashboard',
+      builder: (context, state) => const DashboardPage(),
     ),
     GoRoute(
       path: '/version',

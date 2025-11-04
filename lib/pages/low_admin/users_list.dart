@@ -24,6 +24,13 @@ class _UsersListPageState extends State<UsersListPage> {
   String? _errorMessage;
 
   @override
+  void initState() {
+    super.initState();
+    _searchController.text = '';
+    _searchUsers();
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -31,13 +38,6 @@ class _UsersListPageState extends State<UsersListPage> {
 
   Future<void> _searchUsers() async {
     final query = _searchController.text.trim();
-    if (query.isEmpty) {
-      setState(() {
-        _users = [];
-        _errorMessage = null;
-      });
-      return;
-    }
 
     setState(() {
       _isLoading = true;
@@ -46,7 +46,7 @@ class _UsersListPageState extends State<UsersListPage> {
 
     final result = await _restClient.fallback
         .getUserV2ApiV2LowAdminApiUserV2Get(
-      q: query,
+      q: query.isEmpty ? null : query,
       sqlStmtLimit: 50,
     );
 
@@ -213,7 +213,7 @@ class _UsersListPageState extends State<UsersListPage> {
       margin: const EdgeInsets.only(bottom: 12.0),
       elevation: 2,
       child: InkWell(
-        onTap: () => context.go('/low_admin/user_v2/${user.id}'),
+        onTap: () => context.push('/low_admin/user_v2/${user.id}'),
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -396,7 +396,7 @@ class _UsersListPageState extends State<UsersListPage> {
 
     if (result != null) {
       if (!mounted) return;
-      router.go('/low_admin/user_v2/$result');
+      router.push('/low_admin/user_v2/$result');
     }
   }
 }

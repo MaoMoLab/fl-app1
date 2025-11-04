@@ -7,6 +7,8 @@ import 'package:fl_app1/api/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'low_admin_layout.dart';
+
 class UserV2Page extends StatefulWidget {
   const UserV2Page({super.key, required this.userId});
 
@@ -271,9 +273,10 @@ class _UserV2PageState extends State<UserV2Page> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('用户详情（可编辑）')),
-      body: Padding(
+    return LowAdminLayout(
+      title: '用户详情 (ID: ${widget.userId})',
+      selectedIndex: 1,
+      child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
@@ -417,6 +420,23 @@ class _UserV2PageState extends State<UserV2Page> {
                   ),
                 ),
               ),
+
+              const SizedBox(height: 24),
+
+              // 返回按钮
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('返回用户列表'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
             ],
           ),
         ),

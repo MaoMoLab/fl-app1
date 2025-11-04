@@ -4680,7 +4680,9 @@ class _FallbackClient implements FallbackClient {
 
   @override
   Future<WebSubFastapiRoutersApiVLowAdminApiUserVGetUserOldServiceResponse>
-  getUserV2ApiV2LowAdminApiUserV2UserIdGet({required int userId}) async {
+  getUserV2ByUserIdApiV2LowAdminApiUserV2UserIdGet({
+    required int userId,
+  }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -4709,6 +4711,44 @@ class _FallbackClient implements FallbackClient {
               .fromJson(
             _result.data!,
           );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetSearchUserResult> getUserV2ApiV2LowAdminApiUserV2Get({
+    int? sqlStmtLimit = 3000,
+    String? q,
+    DateTime? fromIso,
+    DateTime? toIso,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'sql_stmt_limit': sqlStmtLimit,
+      r'q': q,
+      r'from_iso': fromIso?.toIso8601String(),
+      r'to_iso': toIso?.toIso8601String(),
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetSearchUserResult>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/user_v2',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late GetSearchUserResult _value;
+    try {
+      _value = GetSearchUserResult.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

@@ -1310,11 +1310,20 @@ abstract class FallbackClient {
     @Body() required ParamModelPatch body,
   });
 
-  /// Get User V2
+  /// Get User V2 By User Id
   @GET('/api/v2/low_admin_api/user_v2/{user_id}')
   Future<WebSubFastapiRoutersApiVLowAdminApiUserVGetUserOldServiceResponse>
-  getUserV2ApiV2LowAdminApiUserV2UserIdGet({
+  getUserV2ByUserIdApiV2LowAdminApiUserV2UserIdGet({
     @Path('user_id') required int userId,
+  });
+
+  /// Get User V2
+  @GET('/api/v2/low_admin_api/user_v2')
+  Future<GetSearchUserResult> getUserV2ApiV2LowAdminApiUserV2Get({
+    @Query('sql_stmt_limit') int? sqlStmtLimit = 3000,
+    @Query('q') String? q,
+    @Query('from_iso') DateTime? fromIso,
+    @Query('to_iso') DateTime? toIso,
   });
 
   /// Get Captcha Key.

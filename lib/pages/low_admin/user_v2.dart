@@ -59,7 +59,7 @@ class _UserV2PageState extends State<UserV2Page> {
     try {
       // Call both endpoints concurrently
       final results = await Future.wait([
-        rest.fallback.getUserV2ApiV2LowAdminApiUserV2UserIdGet(
+        rest.fallback.getUserV2ByUserIdApiV2LowAdminApiUserV2UserIdGet(
             userId: widget.userId),
         rest.fallback.getUserOldServiceApiV2LowAdminApiUserOldServiceUserIdGet(
             userId: widget.userId),

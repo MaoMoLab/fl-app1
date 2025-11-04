@@ -127,6 +127,7 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
 
       if (pickedTime != null) {
         setState(() {
+          // 创建本地时间 DateTime（默认就是本地时区）
           _dateTimeValues[field] = DateTime(
             pickedDate.year,
             pickedDate.month,

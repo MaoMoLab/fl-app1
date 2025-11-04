@@ -111,7 +111,8 @@ class _EditableUserOldServiceCardState
     _controllers['autoResetBandwidth'] = TextEditingController(
       text: _formatBytes(service.autoResetBandwidth.toInt()),
     );
-    _dateTimeValues['userLevelExpireIn'] = service.userLevelExpireIn;
+    // 从 UTC 转换为本地时间用于显示和编辑
+    _dateTimeValues['userLevelExpireIn'] = service.userLevelExpireIn.toLocal();
   }
 
   @override

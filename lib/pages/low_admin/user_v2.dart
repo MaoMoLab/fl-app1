@@ -17,7 +17,8 @@ class UserV2Page extends StatefulWidget {
   State<UserV2Page> createState() => _UserV2PageState();
 }
 
-class _UserV2PageState extends State<UserV2Page> {inal Dio _dio = Dio(BaseOptions(baseUrl: kDefaultBaseUrl));
+class _UserV2PageState extends State<UserV2Page> {
+  final Dio _dio = Dio(BaseOptions(baseUrl: kDefaultBaseUrl));
   late final RestClient _restClient = RestClient(
     _dio,
     baseUrl: kDefaultBaseUrl,
@@ -82,7 +83,11 @@ class _UserV2PageState extends State<UserV2Page> {inal Dio _dio = Dio(BaseOption
         body['is_email_verify'] = value as bool;
         break;
       case 'userAccountExpireIn':
-        body['user_account_expire_in'] = (value as DateTime).toIso8601String();
+        final localTime = value as DateTime;
+        final utcTime = localTime.toUtc();
+        print('📅 本地时间: $localTime (isUtc: ${localTime.isUtc})');
+        print('📅 UTC时间: $utcTime (isUtc: ${utcTime.isUtc})');
+        body['user_account_expire_in'] = utcTime.toIso8601String();
         break;
       default:
         return false;
@@ -121,7 +126,11 @@ class _UserV2PageState extends State<UserV2Page> {inal Dio _dio = Dio(BaseOption
         body['user_level'] = value as int;
         break;
       case 'userLevelExpireIn':
-        body['user_level_expire_in'] = (value as DateTime).toIso8601String();
+        final localTime = value as DateTime;
+        final utcTime = localTime.toUtc();
+        print('📅 本地时间: $localTime (isUtc: ${localTime.isUtc})');
+        print('📅 UTC时间: $utcTime (isUtc: ${utcTime.isUtc})');
+        body['user_level_expire_in'] = utcTime.toIso8601String();
         break;
       case 'nodeSpeedLimit':
         body['node_speed_limit'] = value as int?;

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:fl_app1/api/export.dart';
 import 'package:fl_app1/api/base_url.dart';
-import 'package:fl_app1/pages/low_admin/widgets/user_v2_info_card.dart';
-import 'package:fl_app1/pages/low_admin/widgets/user_old_service_card.dart';
+import 'package:fl_app1/api/export.dart';
+import 'package:fl_app1/pages/low_admin/widgets/editable_user_old_service_card.dart';
+import 'package:fl_app1/pages/low_admin/widgets/editable_user_v2_info_card.dart';
+import 'package:flutter/material.dart';
 
 class UserV2Page extends StatefulWidget {
   final int userId;
@@ -59,6 +59,78 @@ class _UserV2PageState extends State<UserV2Page> {
     });
   }
 
+  Future<bool> _updateUserV2Field(String field, dynamic value) async {
+    final client = _restClient.fallback;
+
+    final body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
+      email: field == 'email' ? value as String : null,
+      userName: field == 'userName' ? value as String : null,
+      isEnable: field == 'isEnable' ? value as bool : null,
+      telegramId: field == 'telegramId' ? value as int? : null,
+      isEmailVerify: field == 'isEmailVerify' ? value as bool : null,
+      userAccountExpireIn:
+      field == 'userAccountExpireIn' ? value as DateTime : null,
+    );
+
+    final response = await client.patchUserV2ApiV2LowAdminApiUserV2UserIdPatch(
+      userId: widget.userId,
+      body: body,
+    );
+
+    if (response.isSuccess == true) {
+      await _loadUserData();
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> _updateUserOldServiceField(String field, dynamic value) async {
+    final client = _restClient.fallback;
+
+    final currentData = _userOldServiceData;
+    if (currentData == null) return false;
+
+    final body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+      ssUploadSize: field == 'ssUploadSize'
+          ? value as int
+          : currentData.ssUploadSize,
+      ssDownloadSize: field == 'ssDownloadSize'
+          ? value as int
+          : currentData.ssDownloadSize,
+      ssBandwidthTotalSize: field == 'ssBandwidthTotalSize'
+          ? value as int
+          : currentData.ssBandwidthTotalSize,
+      ssBandwidthYesterdayUsedSize: field == 'ssBandwidthYesterdayUsedSize'
+          ? value as int
+          : currentData.ssBandwidthYesterdayUsedSize,
+      userLevel: field == 'userLevel' ? value as int : currentData.userLevel,
+      userLevelExpireIn: field == 'userLevelExpireIn'
+          ? value as DateTime
+          : currentData.userLevelExpireIn,
+      nodeSpeedLimit:
+      field == 'nodeSpeedLimit' ? value as int? : currentData.nodeSpeedLimit,
+      nodeConnector:
+      field == 'nodeConnector' ? value as int : currentData.nodeConnector,
+      autoResetDay:
+      field == 'autoResetDay' ? value as int : currentData.autoResetDay,
+      autoResetBandwidth: field == 'autoResetBandwidth'
+          ? value as num
+          : currentData.autoResetBandwidth,
+    );
+
+    final response =
+    await client.patchUserOldServiceApiV2LowAdminApiUserOldServiceUserIdPatch(
+      userId: widget.userId,
+      body: body,
+    );
+
+    if (response.isSuccess == true) {
+      await _loadUserData();
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,9 +167,15 @@ class _UserV2PageState extends State<UserV2Page> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            UserV2InfoCard(userData: _userV2Data),
+            EditableUserV2InfoCard(
+              userData: _userV2Data,
+              onFieldUpdate: _updateUserV2Field,
+            ),
             const SizedBox(height: 16),
-            UserOldServiceCard(serviceData: _userOldServiceData),
+            EditableUserOldServiceCard(
+              serviceData: _userOldServiceData,
+              onFieldUpdate: _updateUserOldServiceField,
+            ),
           ],
         ),
       ),

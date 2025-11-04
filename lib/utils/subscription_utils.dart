@@ -12,9 +12,10 @@ String addClientTypeToUrl(String baseUrl, String clientType) {
     return uri.replace(queryParameters: params).toString();
   }
   
-  // URL解析失败时使用简单拼接
+  // URL解析失败时使用简单拼接，需要编码参数值
   final separator = baseUrl.contains('?') ? '&' : '?';
-  return '$baseUrl${separator}client_type=$clientType';
+  final encodedClientType = Uri.encodeQueryComponent(clientType);
+  return '$baseUrl${separator}client_type=$encodedClientType';
 }
 
 /// 为SSR订阅链接添加vpn_type参数
@@ -28,7 +29,7 @@ String addSSRTypeToUrl(String baseUrl) {
     return uri.replace(queryParameters: params).toString();
   }
   
-  // URL解析失败时使用简单拼接
+  // URL解析失败时使用简单拼接（ssr是常量，无需编码）
   final separator = baseUrl.contains('?') ? '&' : '?';
   return '$baseUrl${separator}vpn_type=ssr';
 }

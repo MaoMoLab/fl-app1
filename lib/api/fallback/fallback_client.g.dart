@@ -4656,16 +4656,49 @@ class _FallbackClient implements FallbackClient {
   }
 
   @override
-  Future<void> patchUserV2ApiV2LowAdminApiUserV2UserIdPatch({
+  Future<ErrorResponse>
+  patchUserOldServiceApiV2LowAdminApiUserOldServiceUserIdPatch({
     required int userId,
-    required ParamModelPatch body,
+    required WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch
+    body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body.toJson());
-    final _options = _setStreamType<void>(
+    final _options = _setStreamType<ErrorResponse>(
+      Options(method: 'PATCH', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/user_old_service/${userId}',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late ErrorResponse _value;
+    try {
+      _value = ErrorResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<ErrorResponse> patchUserV2ApiV2LowAdminApiUserV2UserIdPatch({
+    required int userId,
+    required WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<ErrorResponse>(
       Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
         _dio.options,
@@ -4675,7 +4708,15 @@ class _FallbackClient implements FallbackClient {
       )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late ErrorResponse _value;
+    try {
+      _value = ErrorResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override

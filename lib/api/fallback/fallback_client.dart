@@ -32,7 +32,6 @@ import '../models/index_get_result_model.dart';
 import '../models/login_post_result_model.dart';
 import '../models/login_web_version_enum.dart';
 import '../models/node_config.dart';
-import '../models/param_model_patch.dart';
 import '../models/post_add_alive_ip_model.dart';
 import '../models/post_add_detect_log_model.dart';
 import '../models/post_func_block_ip_model.dart';
@@ -104,7 +103,9 @@ import '../models/web_sub_fastapi_routers_api_v_auth_account_login_index_params_
 import '../models/web_sub_fastapi_routers_api_v_auth_jwt_token_access_refresh_params_model.dart';
 import '../models/web_sub_fastapi_routers_api_v_auth_jwt_token_login_old_v_params_model.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_old_service_get_user_old_service_response.dart';
+import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_old_service_param_model_patch.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_v_get_user_old_service_response.dart';
+import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_v_param_model_patch.dart';
 import '../models/web_sub_fastapi_routers_v_casino_function_sql_table_enum.dart';
 import '../models/web_sub_fastapi_routers_v_emby_function_sql_table_enum.dart';
 
@@ -1301,13 +1302,26 @@ abstract class FallbackClient {
     @Path('user_id') required int userId,
   });
 
+  /// Patch User Old Service.
+  ///
+  /// 更新用户信息 - 只更新提供的字段.
+  @PATCH('/api/v2/low_admin_api/user_old_service/{user_id}')
+  Future<ErrorResponse>
+  patchUserOldServiceApiV2LowAdminApiUserOldServiceUserIdPatch({
+    @Path('user_id') required int userId,
+    @Body()
+    required WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch
+    body,
+  });
+
   /// Patch User V2.
   ///
   /// 更新用户信息 - 只更新提供的字段.
   @PATCH('/api/v2/low_admin_api/user_v2/{user_id}')
-  Future<void> patchUserV2ApiV2LowAdminApiUserV2UserIdPatch({
+  Future<ErrorResponse> patchUserV2ApiV2LowAdminApiUserV2UserIdPatch({
     @Path('user_id') required int userId,
-    @Body() required ParamModelPatch body,
+    @Body()
+    required WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch body,
   });
 
   /// Get User V2 By User Id

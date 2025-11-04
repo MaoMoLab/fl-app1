@@ -128,11 +128,13 @@ class _EditableUserOldServiceCardState
       if (_editingFields[field] == true) {
         final parsed = _parseBytes(_controllers[field]!.text);
         if (_rawControllers[field]!.text != parsed.toString()) {
+          final rawStr = parsed.toString();
+          final currentRawSelection = _rawControllers[field]!.selection;
           _rawControllers[field]!.value = TextEditingValue(
-            text: parsed.toString(),
-            selection: TextSelection.collapsed(offset: parsed
-                .toString()
-                .length),
+            text: rawStr,
+            selection: currentRawSelection.baseOffset <= rawStr.length
+                ? currentRawSelection
+                : TextSelection.collapsed(offset: rawStr.length),
           );
         }
       }
@@ -144,9 +146,12 @@ class _EditableUserOldServiceCardState
         final rawValue = int.tryParse(_rawControllers[field]!.text) ?? 0;
         final formatted = _formatBytes(rawValue);
         if (_controllers[field]!.text != formatted) {
+          final currentHumanSelection = _controllers[field]!.selection;
           _controllers[field]!.value = TextEditingValue(
             text: formatted,
-            selection: TextSelection.collapsed(offset: formatted.length),
+            selection: currentHumanSelection.baseOffset <= formatted.length
+                ? currentHumanSelection
+                : TextSelection.collapsed(offset: formatted.length),
           );
         }
       }
@@ -183,9 +188,12 @@ class _EditableUserOldServiceCardState
           final bytes = (mbpsValue * 1073741824).toInt();
           final bytesStr = bytes.toString();
           if (_rawControllers[field]!.text != bytesStr) {
+            final currentRawSelection = _rawControllers[field]!.selection;
             _rawControllers[field]!.value = TextEditingValue(
               text: bytesStr,
-              selection: TextSelection.collapsed(offset: bytesStr.length),
+              selection: currentRawSelection.baseOffset <= bytesStr.length
+                  ? currentRawSelection
+                  : TextSelection.collapsed(offset: bytesStr.length),
             );
           }
         }
@@ -207,9 +215,12 @@ class _EditableUserOldServiceCardState
           final rawValue = int.tryParse(text) ?? 0;
           final mbpsValue = (rawValue / 1073741824).toStringAsFixed(2);
           if (_controllers[field]!.text != mbpsValue) {
+            final currentHumanSelection = _controllers[field]!.selection;
             _controllers[field]!.value = TextEditingValue(
               text: mbpsValue,
-              selection: TextSelection.collapsed(offset: mbpsValue.length),
+              selection: currentHumanSelection.baseOffset <= mbpsValue.length
+                  ? currentHumanSelection
+                  : TextSelection.collapsed(offset: mbpsValue.length),
             );
           }
         }
@@ -662,7 +673,16 @@ class _EditableUserOldServiceCardState
                     ),
                   ],
                 )
-                    : Text(_formatBytes(bytes)),
+                    : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(_formatBytes(bytes)),
+                    Text(
+                      '(原始: $bytes 字节)',
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
               IconButton(
                 icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),

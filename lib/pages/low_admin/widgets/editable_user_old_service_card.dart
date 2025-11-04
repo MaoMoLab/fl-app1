@@ -23,6 +23,7 @@ class _EditableUserOldServiceCardState
     extends State<EditableUserOldServiceCard> {
   final Map<String, bool> _editingFields = {};
   final Map<String, TextEditingController> _controllers = {};
+  final Map<String, TextEditingController> _rawControllers = {};
   final Map<String, DateTime> _dateTimeValues = {};
 
   String _formatDateTime(DateTime? dateTime) {
@@ -84,18 +85,17 @@ class _EditableUserOldServiceCardState
     if (widget.serviceData == null) return;
 
     final service = widget.serviceData!;
-    _controllers['ssUploadSize'] = TextEditingController(
-      text: _formatBytes(service.ssUploadSize),
-    );
-    _controllers['ssDownloadSize'] = TextEditingController(
-      text: _formatBytes(service.ssDownloadSize),
-    );
-    _controllers['ssBandwidthTotalSize'] = TextEditingController(
-      text: _formatBytes(service.ssBandwidthTotalSize),
-    );
-    _controllers['ssBandwidthYesterdayUsedSize'] = TextEditingController(
-      text: _formatBytes(service.ssBandwidthYesterdayUsedSize),
-    );
+
+    // 初始化带宽字段的双控制器（人类可读 + 原始数字）
+    _initBandwidthControllers('ssUploadSize', service.ssUploadSize);
+    _initBandwidthControllers('ssDownloadSize', service.ssDownloadSize);
+    _initBandwidthControllers(
+        'ssBandwidthTotalSize', service.ssBandwidthTotalSize);
+    _initBandwidthControllers(
+        'ssBandwidthYesterdayUsedSize', service.ssBandwidthYesterdayUsedSize);
+    _initBandwidthControllers(
+        'autoResetBandwidth', service.autoResetBandwidth.toInt());
+
     _controllers['userLevel'] = TextEditingController(
       text: service.userLevel.toString(),
     );
@@ -108,16 +108,56 @@ class _EditableUserOldServiceCardState
     _controllers['autoResetDay'] = TextEditingController(
       text: service.autoResetDay.toString(),
     );
-    _controllers['autoResetBandwidth'] = TextEditingController(
-      text: _formatBytes(service.autoResetBandwidth.toInt()),
-    );
     // 从 UTC 转换为本地时间用于显示和编辑
     _dateTimeValues['userLevelExpireIn'] = service.userLevelExpireIn.toLocal();
+  }
+
+  void _initBandwidthControllers(String field, int bytes) {
+    // 人类可读格式控制器
+    _controllers[field] = TextEditingController(
+      text: _formatBytes(bytes),
+    );
+    // 原始数字控制器
+    _rawControllers[field] = TextEditingController(
+      text: bytes.toString(),
+    );
+
+    // 添加监听器：人类可读 -> 原始数字
+    _controllers[field]!.addListener(() {
+      if (_editingFields[field] == true) {
+        final parsed = _parseBytes(_controllers[field]!.text);
+        if (_rawControllers[field]!.text != parsed.toString()) {
+          _rawControllers[field]!.value = TextEditingValue(
+            text: parsed.toString(),
+            selection: TextSelection.collapsed(offset: parsed
+                .toString()
+                .length),
+          );
+        }
+      }
+    });
+
+    // 添加监听器：原始数字 -> 人类可读
+    _rawControllers[field]!.addListener(() {
+      if (_editingFields[field] == true) {
+        final rawValue = int.tryParse(_rawControllers[field]!.text) ?? 0;
+        final formatted = _formatBytes(rawValue);
+        if (_controllers[field]!.text != formatted) {
+          _controllers[field]!.value = TextEditingValue(
+            text: formatted,
+            selection: TextSelection.collapsed(offset: formatted.length),
+          );
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     for (var controller in _controllers.values) {
+      controller.dispose();
+    }
+    for (var controller in _rawControllers.values) {
       controller.dispose();
     }
     super.dispose();
@@ -132,11 +172,12 @@ class _EditableUserOldServiceCardState
       dynamic value;
       if (_dateTimeValues.containsKey(field)) {
         value = _dateTimeValues[field];
+      } else if (_rawControllers.containsKey(field)) {
+        // 使用原始数字控制器的值
+        value = int.tryParse(_rawControllers[field]!.text) ?? 0;
       } else if (_controllers.containsKey(field)) {
         final text = _controllers[field]!.text;
-        if (field.contains('Size') || field == 'autoResetBandwidth') {
-          value = _parseBytes(text);
-        } else if (field == 'nodeSpeedLimit' && text.isEmpty) {
+        if (field == 'nodeSpeedLimit' && text.isEmpty) {
           value = null;
         } else {
           value = int.tryParse(text) ?? 0;
@@ -297,25 +338,25 @@ class _EditableUserOldServiceCardState
               ),
             ),
             const SizedBox(height: 16),
-            _buildEditableInfoRow(
+            _buildDualBandwidthRow(
               'ssUploadSize',
               '上传流量',
-              _formatBytes(service.ssUploadSize),
+              service.ssUploadSize,
             ),
-            _buildEditableInfoRow(
+            _buildDualBandwidthRow(
               'ssDownloadSize',
               '下载流量',
-              _formatBytes(service.ssDownloadSize),
+              service.ssDownloadSize,
             ),
-            _buildEditableInfoRow(
+            _buildDualBandwidthRow(
               'ssBandwidthTotalSize',
               '总流量',
-              _formatBytes(service.ssBandwidthTotalSize),
+              service.ssBandwidthTotalSize,
             ),
-            _buildEditableInfoRow(
+            _buildDualBandwidthRow(
               'ssBandwidthYesterdayUsedSize',
               '昨日使用',
-              _formatBytes(service.ssBandwidthYesterdayUsedSize),
+              service.ssBandwidthYesterdayUsedSize,
             ),
             _buildEditableInfoRow(
               'userLevel',
@@ -346,12 +387,10 @@ class _EditableUserOldServiceCardState
               '自动重置日',
               service.autoResetDay > 0 ? '每月 ${service.autoResetDay} 日' : '未设置',
             ),
-            _buildEditableInfoRow(
+            _buildDualBandwidthRow(
               'autoResetBandwidth',
               '重置流量值',
-              service.autoResetBandwidth > 0
-                  ? _formatBytes(service.autoResetBandwidth.toInt())
-                  : '未设置',
+              service.autoResetBandwidth.toInt(),
             ),
           ],
         ),
@@ -489,6 +528,86 @@ class _EditableUserOldServiceCardState
             onPressed: () => _toggleEdit(field),
             padding: const EdgeInsets.all(4),
             constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDualBandwidthRow(String field, String label, int bytes) {
+    final isEditing = _editingFields[field] ?? false;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 120,
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: isEditing
+                    ? Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _controllers[field],
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 8,
+                              ),
+                              border: OutlineInputBorder(),
+                              labelText: '人类可读',
+                              hintText: '如: 1.5 GB',
+                            ),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextField(
+                            controller: _rawControllers[field],
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 8,
+                              ),
+                              border: OutlineInputBorder(),
+                              labelText: '原始字节',
+                              hintText: '如: 1073741824',
+                            ),
+                            keyboardType: TextInputType.number,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+                    : Text(_formatBytes(bytes)),
+              ),
+              IconButton(
+                icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),
+                onPressed: () => _toggleEdit(field),
+                padding: const EdgeInsets.all(4),
+                constraints: const BoxConstraints(),
+              ),
+            ],
           ),
         ],
       ),

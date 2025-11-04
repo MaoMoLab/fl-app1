@@ -24,6 +24,7 @@ class TrafficCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final usagePercentage = totalBytes > 0
         ? (usedBytes / totalBytes).clamp(0.0, 1.0)
         : 0.0;
@@ -38,7 +39,7 @@ class TrafficCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.purple.shade700,
+              color: theme.colorScheme.tertiary,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -46,13 +47,16 @@ class TrafficCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.data_usage, color: Colors.white, size: 28),
+                Icon(
+                  Icons.data_usage,
+                  color: theme.colorScheme.onTertiary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   '流量使用情况',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: theme.colorScheme.onTertiary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -83,7 +87,8 @@ class TrafficCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: _getColorForPercentage(usagePercentage),
+                            color: _getColorForPercentage(usagePercentage,
+                                theme),
                           ),
                         ),
                       ],
@@ -94,9 +99,10 @@ class TrafficCard extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: usagePercentage,
                         minHeight: 12,
-                        backgroundColor: Colors.grey.shade200,
+                        backgroundColor: theme.colorScheme
+                            .surfaceContainerHighest,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          _getColorForPercentage(usagePercentage),
+                          _getColorForPercentage(usagePercentage, theme),
                         ),
                       ),
                     ),
@@ -106,16 +112,14 @@ class TrafficCard extends StatelessWidget {
                       children: [
                         Text(
                           '已用: ${formatBytes(usedBytes)}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade700,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                         Text(
                           '总计: ${formatBytes(totalBytes)}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade700,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -130,19 +134,21 @@ class TrafficCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _buildTrafficInfo(
+                        context,
                         '剩余流量',
                         formatBytes(remainingBytes),
                         Icons.data_usage,
-                        Colors.green,
+                        theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _buildTrafficInfo(
+                        context,
                         '今日已用',
                         formatBytes(todayUsedBytes),
                         Icons.today,
-                        Colors.orange,
+                        theme.colorScheme.secondary,
                       ),
                     ),
                   ],
@@ -154,16 +160,18 @@ class TrafficCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: theme.colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.blue.shade200),
+                    border: Border.all(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.calendar_today,
                         size: 20,
-                        color: Colors.blue.shade700,
+                        color: theme.colorScheme.primary,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -172,18 +180,16 @@ class TrafficCard extends StatelessWidget {
                           children: [
                             Text(
                               '过期时间',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade700,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.onPrimaryContainer,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               formatDate(expireDate),
-                              style: TextStyle(
-                                fontSize: 14,
+                              style: theme.textTheme.titleSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade700,
+                                color: theme.colorScheme.onPrimaryContainer,
                               ),
                             ),
                           ],
@@ -204,8 +210,8 @@ class TrafficCard extends StatelessWidget {
                         icon: const Icon(Icons.shopping_cart, size: 20),
                         label: const Text('购买套餐'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700,
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -220,8 +226,8 @@ class TrafficCard extends StatelessWidget {
                         icon: const Icon(Icons.add_shopping_cart, size: 20),
                         label: const Text('流量包'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple.shade700,
-                          foregroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.secondary,
+                          foregroundColor: theme.colorScheme.onSecondary,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -239,12 +245,13 @@ class TrafficCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTrafficInfo(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildTrafficInfo(BuildContext context,
+      String label,
+      String value,
+      IconData icon,
+      Color color,) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -259,13 +266,14 @@ class TrafficCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 14,
+            style: theme.textTheme.titleSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -275,9 +283,10 @@ class TrafficCard extends StatelessWidget {
     );
   }
 
-  Color _getColorForPercentage(double percentage) {
-    if (percentage >= 0.9) return Colors.red;
-    if (percentage >= 0.7) return Colors.orange;
-    return Colors.green;
+  Color _getColorForPercentage(double percentage, ThemeData theme) {
+    if (percentage >= 0.9) return theme.colorScheme.error;
+    if (percentage >= 0.7) return theme.colorScheme.tertiary;
+    return theme.colorScheme.primary;
   }
 }
+

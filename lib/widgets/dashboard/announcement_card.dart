@@ -10,6 +10,8 @@ class AnnouncementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -19,7 +21,7 @@ class AnnouncementCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.blue.shade600,
+              color: theme.colorScheme.primary,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -27,13 +29,16 @@ class AnnouncementCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.campaign, color: Colors.white, size: 28),
+                Icon(
+                  Icons.campaign,
+                  color: theme.colorScheme.onPrimary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   '重要公告',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -44,10 +49,8 @@ class AnnouncementCard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Text(
               content,
-              style: const TextStyle(
-                fontSize: 14,
+              style: theme.textTheme.bodyMedium?.copyWith(
                 height: 1.5,
-                color: Colors.black87,
               ),
             ),
           ),

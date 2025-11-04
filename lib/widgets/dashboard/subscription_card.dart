@@ -25,6 +25,7 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final hasLinks = widget.subLinks.isNotEmpty;
     final selectedLink = hasLinks
         ? widget.subLinks[_selectedLinkIndex]
@@ -39,7 +40,7 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.blue.shade700,
+              color: theme.colorScheme.secondary,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -47,13 +48,16 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.vpn_key, color: Colors.white, size: 28),
+                Icon(
+                  Icons.vpn_key,
+                  color: theme.colorScheme.onSecondary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
-                const Text(
+                Text(
                   '订阅配置',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: theme.colorScheme.onSecondary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -67,12 +71,10 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
               children: [
                 // 订阅链接选择
                 if (hasLinks && widget.subLinks.length > 1) ...[
-                  const Text(
+                  Text(
                     '选择订阅链接',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -94,21 +96,21 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                 ],
 
                 // 订阅链接显示
-                const Text(
+                Text(
                   '订阅链接',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
+                    border: Border.all(
+                      color: theme.colorScheme.outline,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -136,12 +138,10 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                 const SizedBox(height: 16),
 
                 // 配置密码信息
-                const Text(
+                Text(
                   '配置信息',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -169,16 +169,18 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
   }
 
   Widget _buildPasswordRow(String label, String value, IconData icon) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: theme.colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: theme.colorScheme.outline),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.blue.shade700),
+          Icon(icon, size: 20, color: theme.colorScheme.secondary),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -186,7 +188,9 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
               children: [
                 Text(
                   label,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(

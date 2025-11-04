@@ -4,6 +4,7 @@ import 'package:fl_app1/widgets/dashboard/announcement_card.dart';
 import 'package:fl_app1/widgets/dashboard/status_card.dart';
 import 'package:fl_app1/widgets/dashboard/subscription_card.dart';
 import 'package:fl_app1/widgets/dashboard/traffic_card.dart';
+import 'package:fl_app1/widgets/user_layout.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -142,17 +143,17 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('用户主页'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Container(
+    final theme = Theme.of(context);
+
+    return UserLayout(
+      title: '用户主页',
+      child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.deepPurple.shade100, Colors.blue.shade50],
+            colors: [
+              theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+              theme.colorScheme.surface,
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -182,19 +183,24 @@ class _DashboardPageState extends State<DashboardPage> {
                           margin: const EdgeInsets.only(bottom: 16),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.red.shade50,
+                            color: theme.colorScheme.errorContainer,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.red.shade200),
+                            border: Border.all(
+                              color: theme.colorScheme.error,
+                            ),
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.error, color: Colors.red.shade700),
+                              Icon(
+                                Icons.error,
+                                color: theme.colorScheme.onErrorContainer,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   _error!,
                                   style: TextStyle(
-                                    color: Colors.red.shade700,
+                                    color: theme.colorScheme.onErrorContainer,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -222,25 +228,25 @@ class _DashboardPageState extends State<DashboardPage> {
                             label: '用户等级',
                             value: _userLevel,
                             icon: Icons.star,
-                            color: Colors.amber,
+                            color: theme.colorScheme.primary,
                           ),
                           StatusCard(
                             label: '账户余额',
                             value: '¥$_userBalance',
                             icon: Icons.account_balance_wallet,
-                            color: Colors.green,
+                            color: theme.colorScheme.secondary,
                           ),
                           StatusCard(
                             label: 'IP限制',
                             value: _onlineIpLimit,
                             icon: Icons.devices,
-                            color: Colors.blue,
+                            color: theme.colorScheme.tertiary,
                           ),
                           StatusCard(
                             label: '连接速度',
                             value: _connectionSpeed,
                             icon: Icons.speed,
-                            color: Colors.purple,
+                            color: theme.colorScheme.primary,
                           ),
                         ],
                       ),
@@ -284,7 +290,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
+                                color: theme.colorScheme
+                                    .surfaceContainerHighest,
                                 borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(16),
                                   topRight: Radius.circular(16),
@@ -294,15 +301,15 @@ class _DashboardPageState extends State<DashboardPage> {
                                 children: [
                                   Icon(
                                     Icons.store,
-                                    color: Colors.grey.shade700,
+                                    color: theme.colorScheme.onSurface,
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
                                     '好货铺子',
-                                    style: TextStyle(
-                                      fontSize: 18,
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade800,
+                                      color: theme.colorScheme.onSurface,
                                     ),
                                   ),
                                 ],
@@ -313,11 +320,10 @@ class _DashboardPageState extends State<DashboardPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     '苹果账号/兑换码推荐商家',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black87,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurfaceVariant,
                                     ),
                                   ),
                                   const SizedBox(height: 12),
@@ -330,12 +336,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                           (context, error, stackTrace) {
                                             return Container(
                                               height: 150,
-                                              color: Colors.grey.shade200,
+                                              color: theme.colorScheme
+                                                  .surfaceContainerHighest,
                                               child: Center(
                                                 child: Icon(
                                                   Icons.image_not_supported,
                                                   size: 50,
-                                                  color: Colors.grey.shade400,
+                                                  color: theme.colorScheme
+                                                      .onSurfaceVariant,
                                                 ),
                                               ),
                                             );
@@ -350,8 +358,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                         'https://hhpz.store',
                                       ),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue.shade700,
-                                        foregroundColor: Colors.white,
+                                        backgroundColor: theme.colorScheme
+                                            .primary,
+                                        foregroundColor: theme.colorScheme
+                                            .onPrimary,
                                         padding: const EdgeInsets.symmetric(
                                           vertical: 12,
                                         ),

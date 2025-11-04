@@ -12715,35 +12715,75 @@
             "description": "最后使用时间 t"
           },
           "ss_upload_size": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Ss Upload Size",
             "description": "上传数量 u"
           },
           "ss_download_size": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Ss Download Size",
             "description": "下载数量 d"
           },
           "ss_bandwidth_total_size": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Ss Bandwidth Total Size",
             "description": "transfer_enable"
           },
           "ss_bandwidth_yesterday_used_size": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Ss Bandwidth Yesterday Used Size",
-            "description": "昨天使用的流量数量 last_day_t",
-            "default": 0
+            "description": "昨天使用的流量数量 last_day_t"
           },
           "user_level": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "User Level",
-            "description": "class",
-            "default": 0
+            "description": "class"
           },
           "user_level_expire_in": {
-            "type": "string",
-            "format": "date-time",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "User Level Expire In",
             "description": "等级过期时间 class_expire"
           },
@@ -12759,22 +12799,40 @@
             "title": "Node Speed Limit"
           },
           "node_connector": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Node Connector",
-            "description": "用户在线设备数量",
-            "default": 0
+            "description": "用户在线设备数量"
           },
           "auto_reset_day": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Auto Reset Day",
-            "description": "旧版 自动重置流量日",
-            "default": 0
+            "description": "旧版 自动重置流量日"
           },
           "auto_reset_bandwidth": {
-            "type": "number",
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Auto Reset Bandwidth",
-            "description": "旧版 重置流量值",
-            "default": 0.0
+            "description": "旧版 重置流量值"
           },
           "last_check_in_time": {
             "anyOf": [
@@ -12791,12 +12849,6 @@
           }
         },
         "type": "object",
-        "required": [
-          "ss_upload_size",
-          "ss_download_size",
-          "ss_bandwidth_total_size",
-          "user_level_expire_in"
-        ],
         "title": "ParamModelPatch",
         "description": "PATCH 更新模型 - 只更新提供的字段"
       },

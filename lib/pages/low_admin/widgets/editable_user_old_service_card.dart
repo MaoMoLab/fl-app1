@@ -97,9 +97,8 @@ class _EditableUserOldServiceCardState
         'autoResetBandwidth', service.autoResetBandwidth.toInt());
 
     // 初始化节点速率限制的双控制器（Mbps + 原始字节）
-    if (service.nodeSpeedLimit != null && service.nodeSpeedLimit! > 0) {
-      _initSpeedLimitControllers('nodeSpeedLimit', service.nodeSpeedLimit!);
-    }
+    // 即使为空也初始化，确保编辑时可以正常同步
+    _initSpeedLimitControllers('nodeSpeedLimit', service.nodeSpeedLimit ?? 0);
 
     _controllers['userLevel'] = TextEditingController(
       text: service.userLevel.toString(),
@@ -156,27 +155,39 @@ class _EditableUserOldServiceCardState
 
   void _initSpeedLimitControllers(String field, int bytesValue) {
     // Mbps 格式控制器 (bytesValue / 1073741824 = Mbps)
-    final mbps = (bytesValue / 1073741824).toStringAsFixed(2);
+    // 如果值为0，初始化为空字符串
+    final mbps = bytesValue > 0
+        ? (bytesValue / 1073741824).toStringAsFixed(2)
+        : '';
     _controllers[field] = TextEditingController(
       text: mbps,
     );
     // 原始字节控制器
     _rawControllers[field] = TextEditingController(
-      text: bytesValue.toString(),
+      text: bytesValue > 0 ? bytesValue.toString() : '',
     );
 
     // 添加监听器：Mbps -> 原始字节
     _controllers[field]!.addListener(() {
       if (_editingFields[field] == true) {
-        final mbpsValue = double.tryParse(_controllers[field]!.text) ?? 0;
-        final bytes = (mbpsValue * 1073741824).toInt();
-        if (_rawControllers[field]!.text != bytes.toString()) {
-          _rawControllers[field]!.value = TextEditingValue(
-            text: bytes.toString(),
-            selection: TextSelection.collapsed(offset: bytes
-                .toString()
-                .length),
-          );
+        final text = _controllers[field]!.text.trim();
+        if (text.isEmpty) {
+          if (_rawControllers[field]!.text != '') {
+            _rawControllers[field]!.value = const TextEditingValue(
+              text: '',
+              selection: TextSelection.collapsed(offset: 0),
+            );
+          }
+        } else {
+          final mbpsValue = double.tryParse(text) ?? 0;
+          final bytes = (mbpsValue * 1073741824).toInt();
+          final bytesStr = bytes.toString();
+          if (_rawControllers[field]!.text != bytesStr) {
+            _rawControllers[field]!.value = TextEditingValue(
+              text: bytesStr,
+              selection: TextSelection.collapsed(offset: bytesStr.length),
+            );
+          }
         }
       }
     });
@@ -184,13 +195,23 @@ class _EditableUserOldServiceCardState
     // 添加监听器：原始字节 -> Mbps
     _rawControllers[field]!.addListener(() {
       if (_editingFields[field] == true) {
-        final rawValue = int.tryParse(_rawControllers[field]!.text) ?? 0;
-        final mbpsValue = (rawValue / 1073741824).toStringAsFixed(2);
-        if (_controllers[field]!.text != mbpsValue) {
-          _controllers[field]!.value = TextEditingValue(
-            text: mbpsValue,
-            selection: TextSelection.collapsed(offset: mbpsValue.length),
-          );
+        final text = _rawControllers[field]!.text.trim();
+        if (text.isEmpty) {
+          if (_controllers[field]!.text != '') {
+            _controllers[field]!.value = const TextEditingValue(
+              text: '',
+              selection: TextSelection.collapsed(offset: 0),
+            );
+          }
+        } else {
+          final rawValue = int.tryParse(text) ?? 0;
+          final mbpsValue = (rawValue / 1073741824).toStringAsFixed(2);
+          if (_controllers[field]!.text != mbpsValue) {
+            _controllers[field]!.value = TextEditingValue(
+              text: mbpsValue,
+              selection: TextSelection.collapsed(offset: mbpsValue.length),
+            );
+          }
         }
       }
     });

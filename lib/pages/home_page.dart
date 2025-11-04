@@ -47,8 +47,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 8),
             ElevatedButton(
+              onPressed: () => context.go('/low_admin'),
+              child: const Text('低权限管理后台'),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
               onPressed: () => context.go('/low_admin/user_v2/3'),
-              child: const Text('查看 /v1/管理员'),
+              child: const Text('查看用户详情（示例ID=3）'),
             ),
           ],
         ),

@@ -237,8 +237,11 @@ class _SubscriptionCardState extends State<SubscriptionCard>
                 const SizedBox(height: 16),
 
                 // Tab内容
-                SizedBox(
-                  height: 400,
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.5,
+                    minHeight: 300,
+                  ),
                   child: TabBarView(
                     controller: _tabController,
                     children: [
@@ -332,36 +335,38 @@ class _SubscriptionCardState extends State<SubscriptionCard>
                 setState(() => _hoverVisibility[os] = false);
               }
             },
-            child: TextField(
-              readOnly: true,
-              controller: TextEditingController(
-                text: isVisible ? link : '••••••••',
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                border: Border.all(color: Theme.of(context).colorScheme.outline),
+                borderRadius: BorderRadius.circular(4),
               ),
-              style: const TextStyle(fontSize: 13),
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        isVisible ? Icons.visibility_off : Icons.visibility,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _manualVisibility[os] = !(_manualVisibility[os] ?? false);
-                        });
-                      },
-                      tooltip: isVisible ? '隐藏链接' : '显示链接',
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SelectableText(
+                      isVisible ? link : '••••••••',
+                      style: const TextStyle(fontSize: 13),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.copy, size: 20),
-                      onPressed: () => copyToClipboard(context, link),
-                      tooltip: '复制链接',
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      isVisible ? Icons.visibility_off : Icons.visibility,
+                      size: 20,
                     ),
-                  ],
-                ),
+                    onPressed: () {
+                      setState(() {
+                        _manualVisibility[os] = !(_manualVisibility[os] ?? false);
+                      });
+                    },
+                    tooltip: isVisible ? '隐藏链接' : '显示链接',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.copy, size: 20),
+                    onPressed: () => copyToClipboard(context, link),
+                    tooltip: '复制链接',
+                  ),
+                ],
               ),
             ),
           ),
@@ -476,18 +481,28 @@ class _SubscriptionCardState extends State<SubscriptionCard>
       children: [
         Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
-        TextField(
-          readOnly: true,
-          controller: TextEditingController(text: value),
-          style: const TextStyle(fontSize: 13),
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            prefixIcon: Icon(icon, size: 20),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.copy, size: 20),
-              onPressed: () => copyToClipboard(context, value),
-              tooltip: '复制',
-            ),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).colorScheme.outline),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SelectableText(
+                  value,
+                  style: const TextStyle(fontSize: 13),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.copy, size: 20),
+                onPressed: () => copyToClipboard(context, value),
+                tooltip: '复制',
+              ),
+            ],
           ),
         ),
       ],

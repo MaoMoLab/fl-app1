@@ -59,22 +59,39 @@ class AuthInterceptor extends Interceptor {
         }
 
         // 重试原始请求
-        final options = Options(
-          method: err.requestOptions.method,
-          headers: err.requestOptions.headers,
-        );
+        try {
+          final options = Options(
+            method: err.requestOptions.method,
+            headers: err.requestOptions.headers,
+          );
 
-        final response = await _dio.request(
-          err.requestOptions.path,
-          data: err.requestOptions.data,
-          queryParameters: err.requestOptions.queryParameters,
-          options: options,
-        );
+          final response = await _dio.request(
+            err.requestOptions.path,
+            data: err.requestOptions.data,
+            queryParameters: err.requestOptions.queryParameters,
+            options: options,
+          );
 
-        debugPrint('✅ 重试请求成功: ${response.statusCode}');
-        return handler.resolve(response);
+          debugPrint('✅ 重试请求成功: ${response.statusCode}');
+          return handler.resolve(response);
+        } catch (retryError) {
+          debugPrint('❌ 重试请求失败: $retryError');
+          return super.onError(err, handler);
+        }
       } else {
-        debugPrint('❌ 令牌刷新失败，请求终止');
+        debugPrint('❌ 令牌刷新失败，返回 401 错误响应');
+        // 返回一个包含错误信息的响应，而不是抛出异常
+        return handler.resolve(
+          Response(
+            requestOptions: err.requestOptions,
+            statusCode: 401,
+            statusMessage: '认证失败，请重新登录',
+            data: {
+              'success': false,
+              'message': '认证失败，请重新登录',
+            },
+          ),
+        );
       }
     }
 

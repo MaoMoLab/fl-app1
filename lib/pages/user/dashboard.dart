@@ -69,6 +69,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
     final response = await _restClient.fallback.getIndexApiV2UserDashboardGet();
 
+    if (!mounted) return;
+
     if (response.isSuccess) {
       final result = response.result;
 

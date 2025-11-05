@@ -79,6 +79,7 @@ class AuthStore extends ChangeNotifier {
       if (_refreshJWTToken == null) {
         debugPrint('❌ 重新加载后仍然没有 refresh token，清除访问令牌并登出');
         await logout();
+        _navigateToLogin();
         return false;
       }
       debugPrint('✅ 重新加载后找到 refresh token');
@@ -106,17 +107,19 @@ class AuthStore extends ChangeNotifier {
         debugPrint('Token refresh failed: ${response.message}');
         await logout();
         _showErrorSnackBar('登录令牌已过期，请重新登录');
+        _navigateToLogin();
         return false;
       }
     } on DioException catch (e) {
       debugPrint('❌ Token refresh DioException: ${e.response?.statusCode}');
       debugPrint('❌ Error message: ${e.message}');
 
-      // 检查是否是 403 错误（刷新令牌无效）
-      if (e.response?.statusCode == 403) {
-        debugPrint('❌ 刷新令牌无效（403），清除所有令牌');
+      // 检查是否是 401 或 403 错误（刷新令牌无效）
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        debugPrint('❌ 刷新令牌无效（${e.response?.statusCode}），清除所有令牌');
         await logout();
         _showErrorSnackBar('登录令牌已过期，请重新登录');
+        _navigateToLogin();
         return false;
       }
 
@@ -124,13 +127,24 @@ class AuthStore extends ChangeNotifier {
       debugPrint('❌ 网络错误，清除令牌');
       await logout();
       _showErrorSnackBar('网络错误，请重新登录');
+      _navigateToLogin();
       return false;
     } catch (e, stackTrace) {
       debugPrint('❌ Token refresh unexpected error: $e');
       debugPrint('Stack trace: $stackTrace');
       await logout();
       _showErrorSnackBar('令牌刷新失败，请重新登录');
+      _navigateToLogin();
       return false;
+    }
+  }
+
+  void _navigateToLogin() {
+    if (onNavigateToLogin != null) {
+      debugPrint('🔄 触发跳转到登录页');
+      onNavigateToLogin!();
+    } else {
+      debugPrint('⚠️ 无法跳转到登录页（回调未设置）');
     }
   }
 
@@ -145,6 +159,9 @@ class AuthStore extends ChangeNotifier {
 
   // 令牌过期回调，由外部设置
   void Function(String message)? onTokenExpired;
+
+  // 跳转到登录页回调，由外部设置
+  void Function()? onNavigateToLogin;
 
   void _startRefreshTokenTimer() {
     _stopRefreshTokenTimer();

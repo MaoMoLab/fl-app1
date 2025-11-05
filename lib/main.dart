@@ -35,6 +35,11 @@ void main() async {
     );
   };
 
+  // 设置跳转到登录页回调
+  AuthStore().onNavigateToLogin = () {
+    router.go('/login');
+  };
+
   runApp(const MyApp());
 }
 

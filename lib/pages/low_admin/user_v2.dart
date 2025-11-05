@@ -57,50 +57,18 @@ class _UserV2PageState extends State<UserV2Page> {
     });
   }
 
-  Future<bool> _updateUserV2Field(String field, dynamic value) async {
-    WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch body;
-
-    switch (field) {
-      case 'email':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
-          email: value as String,
-        );
-        break;
-      case 'userName':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
-          userName: value as String,
-        );
-        break;
-      case 'isEnable':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
-          isEnable: value as bool,
-        );
-        break;
-      case 'telegramId':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
-          telegramId: value as int?,
-        );
-        break;
-      case 'isEmailVerify':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
-          isEmailVerify: value as bool,
-        );
-        break;
-      case 'userAccountExpireIn':
-        final localTime = value as DateTime;
-        final utcTime = localTime.toUtc();
-        print('📅 本地时间: $localTime (isUtc: ${localTime.isUtc})');
-        print('📅 UTC时间: $utcTime (isUtc: ${utcTime.isUtc})');
-        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
-          userAccountExpireIn: utcTime,
-        );
-        break;
-      default:
-        return false;
-    }
+  Future<bool> _updateUserV2(Map<String, dynamic> data) async {
+    final body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPut(
+      email: data['email'] as String,
+      userName: data['userName'] as String,
+      isEnable: data['isEnable'] as bool,
+      isEmailVerify: data['isEmailVerify'] as bool,
+      userAccountExpireIn: (data['userAccountExpireIn'] as DateTime).toUtc(),
+      telegramId: data['telegramId'] as int?,
+    );
 
     final response = await _restClient.fallback
-        .patchUserV2ApiV2LowAdminApiUserV2UserIdPatch(
+        .putUserV2ApiV2LowAdminApiUserV2UserIdPut(
           userId: widget.userId,
           body: body,
         );
@@ -112,70 +80,22 @@ class _UserV2PageState extends State<UserV2Page> {
     return false;
   }
 
-  Future<bool> _updateUserOldServiceField(String field, dynamic value) async {
-    WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch body;
-
-    switch (field) {
-      case 'ssUploadSize':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          ssUploadSize: value as int,
-        );
-        break;
-      case 'ssDownloadSize':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          ssDownloadSize: value as int,
-        );
-        break;
-      case 'ssBandwidthTotalSize':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          ssBandwidthTotalSize: value as int,
-        );
-        break;
-      case 'ssBandwidthYesterdayUsedSize':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          ssBandwidthYesterdayUsedSize: value as int,
-        );
-        break;
-      case 'userLevel':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          userLevel: value as int,
-        );
-        break;
-      case 'userLevelExpireIn':
-        final localTime = value as DateTime;
-        final utcTime = localTime.toUtc();
-        print('📅 本地时间: $localTime (isUtc: ${localTime.isUtc})');
-        print('📅 UTC时间: $utcTime (isUtc: ${utcTime.isUtc})');
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          userLevelExpireIn: utcTime,
-        );
-        break;
-      case 'nodeSpeedLimit':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          nodeSpeedLimit: value as int?,
-        );
-        break;
-      case 'nodeConnector':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          nodeConnector: value as int,
-        );
-        break;
-      case 'autoResetDay':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          autoResetDay: value as int,
-        );
-        break;
-      case 'autoResetBandwidth':
-        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
-          autoResetBandwidth: value as num,
-        );
-        break;
-      default:
-        return false;
-    }
+  Future<bool> _updateUserOldService(Map<String, dynamic> data) async {
+    final body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPut(
+      ssUploadSize: data['ssUploadSize'] as int,
+      ssDownloadSize: data['ssDownloadSize'] as int,
+      ssBandwidthTotalSize: data['ssBandwidthTotalSize'] as int,
+      ssBandwidthYesterdayUsedSize: data['ssBandwidthYesterdayUsedSize'] as int,
+      userLevel: data['userLevel'] as int,
+      userLevelExpireIn: (data['userLevelExpireIn'] as DateTime).toUtc(),
+      nodeSpeedLimit: data['nodeSpeedLimit'] as int?,
+      nodeConnector: data['nodeConnector'] as int,
+      autoResetDay: data['autoResetDay'] as int,
+      autoResetBandwidth: data['autoResetBandwidth'] as num,
+    );
 
     final response = await _restClient.fallback
-        .patchUserOldServiceApiV2LowAdminApiUserOldServiceUserIdPatch(
+        .putUserOldServiceApiV2LowAdminApiUserOldServiceUserIdPut(
           userId: widget.userId,
           body: body,
         );
@@ -225,12 +145,12 @@ class _UserV2PageState extends State<UserV2Page> {
                 children: [
                   EditableUserV2InfoCard(
                     userData: _userV2Data,
-                    onFieldUpdate: _updateUserV2Field,
+                    onUpdate: _updateUserV2,
                   ),
                   const SizedBox(height: 16),
                   EditableUserOldServiceCard(
                     serviceData: _userOldServiceData,
-                    onFieldUpdate: _updateUserOldServiceField,
+                    onUpdate: _updateUserOldService,
                   ),
                 ],
               ),

@@ -2,16 +2,16 @@ import 'package:fl_app1/api/models/admin_old_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-typedef OnFieldUpdate = Future<bool> Function(String field, dynamic value);
+typedef OnUpdate = Future<bool> Function(Map<String, dynamic> data);
 
 class EditableUserOldServiceCard extends StatefulWidget {
   final AdminOldService? serviceData;
-  final OnFieldUpdate onFieldUpdate;
+  final OnUpdate onUpdate;
 
   const EditableUserOldServiceCard({
     super.key,
     required this.serviceData,
-    required this.onFieldUpdate,
+    required this.onUpdate,
   });
 
   @override
@@ -21,7 +21,7 @@ class EditableUserOldServiceCard extends StatefulWidget {
 
 class _EditableUserOldServiceCardState
     extends State<EditableUserOldServiceCard> {
-  final Map<String, bool> _editingFields = {};
+  bool _isEditing = false;
   final Map<String, TextEditingController> _controllers = {};
   final Map<String, TextEditingController> _rawControllers = {};
   final Map<String, DateTime> _dateTimeValues = {};
@@ -127,7 +127,7 @@ class _EditableUserOldServiceCardState
 
     // 添加监听器：人类可读 -> 原始数字
     _controllers[field]!.addListener(() {
-      if (_editingFields[field] == true) {
+      if (_isEditing) {
         final parsed = _parseBytes(_controllers[field]!.text);
         if (_rawControllers[field]!.text != parsed.toString()) {
           final rawStr = parsed.toString();
@@ -144,7 +144,7 @@ class _EditableUserOldServiceCardState
 
     // 添加监听器：原始数字 -> 人类可读
     _rawControllers[field]!.addListener(() {
-      if (_editingFields[field] == true) {
+      if (_isEditing) {
         final rawValue = int.tryParse(_rawControllers[field]!.text) ?? 0;
         final formatted = _formatBytes(rawValue);
         if (_controllers[field]!.text != formatted) {
@@ -174,7 +174,7 @@ class _EditableUserOldServiceCardState
 
     // 添加监听器：Mbps -> 原始字节
     _controllers[field]!.addListener(() {
-      if (_editingFields[field] == true) {
+      if (_isEditing) {
         final text = _controllers[field]!.text.trim();
         if (text.isEmpty) {
           if (_rawControllers[field]!.text != '') {
@@ -202,7 +202,7 @@ class _EditableUserOldServiceCardState
 
     // 添加监听器：原始字节 -> Mbps
     _rawControllers[field]!.addListener(() {
-      if (_editingFields[field] == true) {
+      if (_isEditing) {
         final text = _rawControllers[field]!.text.trim();
         if (text.isEmpty) {
           if (_controllers[field]!.text != '') {
@@ -239,46 +239,48 @@ class _EditableUserOldServiceCardState
     super.dispose();
   }
 
-  Future<void> _toggleEdit(String field) async {
-    if (_editingFields[field] == true) {
-      setState(() {
-        _editingFields[field] = false;
-      });
+  Future<void> _toggleEdit() async {
+    if (_isEditing) {
+      final speedLimitText = _rawControllers['nodeSpeedLimit']!.text.trim();
+      final data = <String, dynamic>{
+        'ssUploadSize': int.tryParse(_rawControllers['ssUploadSize']!.text) ??
+            0,
+        'ssDownloadSize': int.tryParse(
+            _rawControllers['ssDownloadSize']!.text) ?? 0,
+        'ssBandwidthTotalSize': int.tryParse(
+            _rawControllers['ssBandwidthTotalSize']!.text) ?? 0,
+        'ssBandwidthYesterdayUsedSize': int.tryParse(
+            _rawControllers['ssBandwidthYesterdayUsedSize']!.text) ?? 0,
+        'userLevel': int.tryParse(_controllers['userLevel']!.text) ?? 0,
+        'userLevelExpireIn': _dateTimeValues['userLevelExpireIn']!,
+        'nodeSpeedLimit': speedLimitText.isEmpty ? null : int.tryParse(
+            speedLimitText),
+        'nodeConnector': int.tryParse(_controllers['nodeConnector']!.text) ?? 0,
+        'autoResetDay': int.tryParse(_controllers['autoResetDay']!.text) ?? 0,
+        'autoResetBandwidth': int.tryParse(
+            _rawControllers['autoResetBandwidth']!.text) ?? 0,
+      };
 
-      dynamic value;
-      if (_dateTimeValues.containsKey(field)) {
-        value = _dateTimeValues[field];
-      } else if (_rawControllers.containsKey(field)) {
-        // 使用原始数字控制器的值
-        value = int.tryParse(_rawControllers[field]!.text) ?? 0;
-      } else if (_controllers.containsKey(field)) {
-        final text = _controllers[field]!.text;
-        if (field == 'nodeSpeedLimit' && text.isEmpty) {
-          value = null;
-        } else {
-          value = int.tryParse(text) ?? 0;
-        }
-      }
-
-      final success = await widget.onFieldUpdate(field, value);
+      final success = await widget.onUpdate(data);
 
       if (success) {
+        setState(() => _isEditing = false);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('数据修改成功: $field'),
+            const SnackBar(
+              content: Text('服务信息修改成功'),
               backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
+              duration: Duration(seconds: 2),
             ),
           );
         }
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('数据修改失败: $field'),
+            const SnackBar(
+              content: Text('服务信息修改失败'),
               backgroundColor: Colors.red,
-              duration: const Duration(seconds: 2),
+              duration: Duration(seconds: 2),
             ),
           );
           _initializeControllers();
@@ -286,9 +288,7 @@ class _EditableUserOldServiceCardState
         }
       }
     } else {
-      setState(() {
-        _editingFields[field] = true;
-      });
+      setState(() => _isEditing = true);
     }
   }
 
@@ -354,6 +354,16 @@ class _EditableUserOldServiceCardState
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: _toggleEdit,
+                  icon: Icon(_isEditing ? Icons.check : Icons.edit, size: 18),
+                  label: Text(_isEditing ? '提交' : '修改'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _isEditing ? Colors.green : null,
+                    foregroundColor: _isEditing ? Colors.white : null,
+                  ),
                 ),
               ],
             ),
@@ -503,8 +513,6 @@ class _EditableUserOldServiceCardState
   }
 
   Widget _buildEditableInfoRow(String field, String label, String value) {
-    final isEditing = _editingFields[field] ?? false;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -521,7 +529,7 @@ class _EditableUserOldServiceCardState
             ),
           ),
           Expanded(
-            child: isEditing
+            child: _isEditing
                 ? TextField(
                     controller: _controllers[field],
                     decoration: const InputDecoration(
@@ -542,20 +550,12 @@ class _EditableUserOldServiceCardState
                   )
                 : Text(value),
           ),
-          IconButton(
-            icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),
-            onPressed: () => _toggleEdit(field),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(),
-          ),
         ],
       ),
     );
   }
 
   Widget _buildDateTimeInfoRow(String field, String label, DateTime value) {
-    final isEditing = _editingFields[field] ?? false;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -572,7 +572,7 @@ class _EditableUserOldServiceCardState
             ),
           ),
           Expanded(
-            child: isEditing
+            child: _isEditing
                 ? InkWell(
                     onTap: () => _selectDateTime(field),
                     child: Container(
@@ -597,20 +597,12 @@ class _EditableUserOldServiceCardState
                     ),
                   ),
           ),
-          IconButton(
-            icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),
-            onPressed: () => _toggleEdit(field),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(),
-          ),
         ],
       ),
     );
   }
 
   Widget _buildDualBandwidthRow(String field, String label, int bytes) {
-    final isEditing = _editingFields[field] ?? false;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
@@ -630,7 +622,7 @@ class _EditableUserOldServiceCardState
                 ),
               ),
               Expanded(
-                child: isEditing
+                child: _isEditing
                     ? Column(
                         children: [
                           Row(
@@ -687,12 +679,6 @@ class _EditableUserOldServiceCardState
                         ],
                       ),
               ),
-              IconButton(
-                icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),
-                onPressed: () => _toggleEdit(field),
-                padding: const EdgeInsets.all(4),
-                constraints: const BoxConstraints(),
-              ),
             ],
           ),
         ],
@@ -701,7 +687,6 @@ class _EditableUserOldServiceCardState
   }
 
   Widget _buildDualSpeedLimitRow(String field, String label, int? bytesValue) {
-    final isEditing = _editingFields[field] ?? false;
     final hasValue = bytesValue != null && bytesValue > 0;
 
     return Padding(
@@ -723,7 +708,7 @@ class _EditableUserOldServiceCardState
                 ),
               ),
               Expanded(
-                child: isEditing
+                child: _isEditing
                     ? Column(
                         children: [
                           Row(
@@ -796,12 +781,6 @@ class _EditableUserOldServiceCardState
                             ),
                         ],
                       ),
-              ),
-              IconButton(
-                icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),
-                onPressed: () => _toggleEdit(field),
-                padding: const EdgeInsets.all(4),
-                constraints: const BoxConstraints(),
               ),
             ],
           ),

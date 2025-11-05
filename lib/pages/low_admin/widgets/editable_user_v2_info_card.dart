@@ -2,16 +2,16 @@ import 'package:fl_app1/api/models/admin_user_v.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-typedef OnFieldUpdate = Future<bool> Function(String field, dynamic value);
+typedef OnUpdate = Future<bool> Function(Map<String, dynamic> data);
 
 class EditableUserV2InfoCard extends StatefulWidget {
   final AdminUserV? userData;
-  final OnFieldUpdate onFieldUpdate;
+  final OnUpdate onUpdate;
 
   const EditableUserV2InfoCard({
     super.key,
     required this.userData,
-    required this.onFieldUpdate,
+    required this.onUpdate,
   });
 
   @override
@@ -19,7 +19,7 @@ class EditableUserV2InfoCard extends StatefulWidget {
 }
 
 class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
-  final Map<String, bool> _editingFields = {};
+  bool _isEditing = false;
   final Map<String, TextEditingController> _controllers = {};
   final Map<String, bool> _boolValues = {};
   final Map<String, DateTime> _dateTimeValues = {};
@@ -58,45 +58,38 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
     super.dispose();
   }
 
-  Future<void> _toggleEdit(String field) async {
-    if (_editingFields[field] == true) {
-      setState(() {
-        _editingFields[field] = false;
-      });
+  Future<void> _toggleEdit() async {
+    if (_isEditing) {
+      final telegramText = _controllers['telegramId']!.text.trim();
+      final data = <String, dynamic>{
+        'userName': _controllers['userName']!.text,
+        'email': _controllers['email']!.text,
+        'telegramId': telegramText.isEmpty ? null : int.tryParse(telegramText),
+        'isEnable': _boolValues['isEnable']!,
+        'isEmailVerify': _boolValues['isEmailVerify']!,
+        'userAccountExpireIn': _dateTimeValues['userAccountExpireIn']!,
+      };
 
-      dynamic value;
-      if (_controllers.containsKey(field)) {
-        value = _controllers[field]!.text;
-        if (field == 'telegramId' && value.isEmpty) {
-          value = null;
-        } else if (field == 'telegramId') {
-          value = int.tryParse(value);
-        }
-      } else if (_boolValues.containsKey(field)) {
-        value = _boolValues[field];
-      } else if (_dateTimeValues.containsKey(field)) {
-        value = _dateTimeValues[field];
-      }
-
-      final success = await widget.onFieldUpdate(field, value);
+      final success = await widget.onUpdate(data);
 
       if (success) {
+        setState(() => _isEditing = false);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('数据修改成功: $field'),
+            const SnackBar(
+              content: Text('用户信息修改成功'),
               backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
+              duration: Duration(seconds: 2),
             ),
           );
         }
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('数据修改失败: $field'),
+            const SnackBar(
+              content: Text('用户信息修改失败'),
               backgroundColor: Colors.red,
-              duration: const Duration(seconds: 2),
+              duration: Duration(seconds: 2),
             ),
           );
           _initializeControllers();
@@ -104,9 +97,7 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
         }
       }
     } else {
-      setState(() {
-        _editingFields[field] = true;
-      });
+      setState(() => _isEditing = true);
     }
   }
 
@@ -171,6 +162,16 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: _toggleEdit,
+                  icon: Icon(_isEditing ? Icons.check : Icons.edit, size: 18),
+                  label: Text(_isEditing ? '提交' : '修改'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _isEditing ? Colors.green : null,
+                    foregroundColor: _isEditing ? Colors.white : null,
+                  ),
                 ),
               ],
             ),
@@ -239,8 +240,6 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
   }
 
   Widget _buildEditableInfoRow(String field, String label, String value) {
-    final isEditing = _editingFields[field] ?? false;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -257,7 +256,7 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
             ),
           ),
           Expanded(
-            child: isEditing
+            child: _isEditing
                 ? TextField(
                     controller: _controllers[field],
                     decoration: const InputDecoration(
@@ -271,20 +270,12 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
                   )
                 : Text(value),
           ),
-          IconButton(
-            icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),
-            onPressed: () => _toggleEdit(field),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(),
-          ),
         ],
       ),
     );
   }
 
   Widget _buildBoolInfoRow(String field, String label, bool value) {
-    final isEditing = _editingFields[field] ?? false;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -301,7 +292,7 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
             ),
           ),
           Expanded(
-            child: isEditing
+            child: _isEditing
                 ? Switch(
                     value: _boolValues[field]!,
                     onChanged: (newValue) {
@@ -318,20 +309,12 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
                     ),
                   ),
           ),
-          IconButton(
-            icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),
-            onPressed: () => _toggleEdit(field),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(),
-          ),
         ],
       ),
     );
   }
 
   Widget _buildDateTimeInfoRow(String field, String label, DateTime value) {
-    final isEditing = _editingFields[field] ?? false;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -348,7 +331,7 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
             ),
           ),
           Expanded(
-            child: isEditing
+            child: _isEditing
                 ? InkWell(
                     onTap: () => _selectDateTime(field),
                     child: Container(
@@ -372,12 +355,6 @@ class _EditableUserV2InfoCardState extends State<EditableUserV2InfoCard> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-          ),
-          IconButton(
-            icon: Icon(isEditing ? Icons.check : Icons.edit, size: 20),
-            onPressed: () => _toggleEdit(field),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(),
           ),
         ],
       ),

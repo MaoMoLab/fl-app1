@@ -91,21 +91,60 @@ class AuthStore extends ChangeNotifier {
       refreshToken: _refreshJWTToken!,
     );
 
-    final response = await rest.fallback
-        .postJwtAccessRefreshApiV2AuthJwtTokenJwtAccessRefreshPost(body: body);
+    try {
+      final response = await rest.fallback
+          .postJwtAccessRefreshApiV2AuthJwtTokenJwtAccessRefreshPost(
+          body: body);
 
-    if (response.isSuccess && response.result.accessToken.isNotEmpty) {
-      await _setTokens(
-        response.result.accessToken,
-        response.result.refreshToken,
-      );
-      return true;
-    } else {
-      debugPrint('Token refresh failed: ${response.message}');
+      if (response.isSuccess && response.result.accessToken.isNotEmpty) {
+        await _setTokens(
+          response.result.accessToken,
+          response.result.refreshToken,
+        );
+        return true;
+      } else {
+        debugPrint('Token refresh failed: ${response.message}');
+        await logout();
+        _showErrorSnackBar('登录令牌已过期，请重新登录');
+        return false;
+      }
+    } on DioException catch (e) {
+      debugPrint('❌ Token refresh DioException: ${e.response?.statusCode}');
+      debugPrint('❌ Error message: ${e.message}');
+
+      // 检查是否是 403 错误（刷新令牌无效）
+      if (e.response?.statusCode == 403) {
+        debugPrint('❌ 刷新令牌无效（403），清除所有令牌');
+        await logout();
+        _showErrorSnackBar('登录令牌已过期，请重新登录');
+        return false;
+      }
+
+      // 其他网络错误
+      debugPrint('❌ 网络错误，清除令牌');
       await logout();
+      _showErrorSnackBar('网络错误，请重新登录');
+      return false;
+    } catch (e, stackTrace) {
+      debugPrint('❌ Token refresh unexpected error: $e');
+      debugPrint('Stack trace: $stackTrace');
+      await logout();
+      _showErrorSnackBar('令牌刷新失败，请重新登录');
       return false;
     }
   }
+
+  void _showErrorSnackBar(String message) {
+    // 使用回调函数让上层显示 SnackBar
+    if (onTokenExpired != null) {
+      onTokenExpired!(message);
+    } else {
+      debugPrint('⚠️ 无法显示 SnackBar: $message（回调未设置）');
+    }
+  }
+
+  // 令牌过期回调，由外部设置
+  void Function(String message)? onTokenExpired;
 
   void _startRefreshTokenTimer() {
     _stopRefreshTokenTimer();
@@ -231,6 +270,7 @@ class AuthStore extends ChangeNotifier {
     }
 
     // 刷新令牌保存在 SharedPreferences 中
+    // 只有当 refreshToken 不为 null 时才更新
     if (refreshToken != null) {
       _refreshJWTToken = refreshToken;
       await _prefs?.setString(AuthConstants.refreshTokenKey, refreshToken);
@@ -240,7 +280,8 @@ class AuthStore extends ChangeNotifier {
           ? "成功"
           : "失败"}');
     } else {
-      await _prefs?.remove(AuthConstants.refreshTokenKey);
+      // refreshToken 为 null 时，不修改现有的刷新令牌
+      debugPrint('💾 refreshToken 为 null，保留现有的刷新令牌');
     }
 
     if (accessToken != null && isAuthenticated) {

@@ -12,14 +12,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,33 +23,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: <Widget>[
             const AuthStatusWidget(),
-            const SizedBox(height: 16),
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () => context.go('/login'),
               child: const Text('打开登录页面'),
             ),
             const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () => context.go('/version'),
-              child: const Text('查看 /v1/version'),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () => context.go('/low_admin'),
-              child: const Text('低权限管理后台'),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () => context.go('/low_admin/user_v2/3'),
-              child: const Text('查看用户详情（示例ID=3）'),
-            ),
-            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => context.go('/user/dashboard'),
               child: const Text('前往主页'),
@@ -70,11 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 8),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

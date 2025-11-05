@@ -5,6 +5,10 @@ import 'package:intl/intl.dart';
 
 import 'routes.dart';
 
+// 全局 ScaffoldMessenger key，用于在任何地方显示 SnackBar
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting();
@@ -12,6 +16,24 @@ void main() async {
 
   // Initialize auth store
   await AuthStore().init();
+
+  // 设置令牌过期回调
+  AuthStore().onTokenExpired = (String message) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 4),
+        action: SnackBarAction(
+          label: '关闭',
+          textColor: Colors.white,
+          onPressed: () {
+            scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+  };
 
   runApp(const MyApp());
 }
@@ -23,6 +45,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      scaffoldMessengerKey: scaffoldMessengerKey,
       routerConfig: router,
       title: 'Flutter Demo',
       theme: ThemeData(

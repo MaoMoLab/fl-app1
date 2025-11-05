@@ -58,6 +58,16 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text('查看用户详情（示例ID=3）'),
             ),
             const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => context.go('/user/dashboard'),
+              child: const Text('前往主页'),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () => context.go('/low_admin'),
+              child: const Text('前往管理主页'),
+            ),
+            const SizedBox(height: 8),
           ],
         ),
       ),

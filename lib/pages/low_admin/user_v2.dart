@@ -1,8 +1,7 @@
-import 'package:dio/dio.dart';
-import 'package:fl_app1/api/base_url.dart';
 import 'package:fl_app1/api/export.dart';
 import 'package:fl_app1/pages/low_admin/widgets/editable_user_old_service_card.dart';
 import 'package:fl_app1/pages/low_admin/widgets/editable_user_v2_info_card.dart';
+import 'package:fl_app1/utils/auth/auth_export.dart';
 import 'package:flutter/material.dart';
 
 class UserV2Page extends StatefulWidget {
@@ -15,11 +14,7 @@ class UserV2Page extends StatefulWidget {
 }
 
 class _UserV2PageState extends State<UserV2Page> {
-  final Dio _dio = Dio(BaseOptions(baseUrl: kDefaultBaseUrl));
-  late final RestClient _restClient = RestClient(
-    _dio,
-    baseUrl: kDefaultBaseUrl,
-  );
+  late final RestClient _restClient = createAuthenticatedClient();
 
   bool _isLoading = false;
   AdminUserV? _userV2Data;
@@ -63,41 +58,54 @@ class _UserV2PageState extends State<UserV2Page> {
   }
 
   Future<bool> _updateUserV2Field(String field, dynamic value) async {
-    final Map<String, dynamic> body = {};
+    WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch body;
 
     switch (field) {
       case 'email':
-        body['email'] = value as String;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
+          email: value as String,
+        );
         break;
       case 'userName':
-        body['user_name'] = value as String;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
+          userName: value as String,
+        );
         break;
       case 'isEnable':
-        body['is_enable'] = value as bool;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
+          isEnable: value as bool,
+        );
         break;
       case 'telegramId':
-        body['telegram_id'] = value as int?;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
+          telegramId: value as int?,
+        );
         break;
       case 'isEmailVerify':
-        body['is_email_verify'] = value as bool;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
+          isEmailVerify: value as bool,
+        );
         break;
       case 'userAccountExpireIn':
         final localTime = value as DateTime;
         final utcTime = localTime.toUtc();
         print('📅 本地时间: $localTime (isUtc: ${localTime.isUtc})');
         print('📅 UTC时间: $utcTime (isUtc: ${utcTime.isUtc})');
-        body['user_account_expire_in'] = utcTime.toIso8601String();
+        body = WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch(
+          userAccountExpireIn: utcTime,
+        );
         break;
       default:
         return false;
     }
 
-    final response = await _dio.patch<Map<String, dynamic>>(
-      '/api/v2/low_admin_api/user_v2/${widget.userId}',
-      data: body,
-    );
+    final response = await _restClient.fallback
+        .patchUserV2ApiV2LowAdminApiUserV2UserIdPatch(
+          userId: widget.userId,
+          body: body,
+        );
 
-    if (response.statusCode == 200 && response.data?['is_success'] == true) {
+    if (response.isSuccess == true) {
       await _loadUserData();
       return true;
     }
@@ -105,53 +113,74 @@ class _UserV2PageState extends State<UserV2Page> {
   }
 
   Future<bool> _updateUserOldServiceField(String field, dynamic value) async {
-    final Map<String, dynamic> body = {};
+    WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch body;
 
     switch (field) {
       case 'ssUploadSize':
-        body['ss_upload_size'] = value as int;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          ssUploadSize: value as int,
+        );
         break;
       case 'ssDownloadSize':
-        body['ss_download_size'] = value as int;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          ssDownloadSize: value as int,
+        );
         break;
       case 'ssBandwidthTotalSize':
-        body['ss_bandwidth_total_size'] = value as int;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          ssBandwidthTotalSize: value as int,
+        );
         break;
       case 'ssBandwidthYesterdayUsedSize':
-        body['ss_bandwidth_yesterday_used_size'] = value as int;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          ssBandwidthYesterdayUsedSize: value as int,
+        );
         break;
       case 'userLevel':
-        body['user_level'] = value as int;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          userLevel: value as int,
+        );
         break;
       case 'userLevelExpireIn':
         final localTime = value as DateTime;
         final utcTime = localTime.toUtc();
         print('📅 本地时间: $localTime (isUtc: ${localTime.isUtc})');
         print('📅 UTC时间: $utcTime (isUtc: ${utcTime.isUtc})');
-        body['user_level_expire_in'] = utcTime.toIso8601String();
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          userLevelExpireIn: utcTime,
+        );
         break;
       case 'nodeSpeedLimit':
-        body['node_speed_limit'] = value as int?;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          nodeSpeedLimit: value as int?,
+        );
         break;
       case 'nodeConnector':
-        body['node_connector'] = value as int;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          nodeConnector: value as int,
+        );
         break;
       case 'autoResetDay':
-        body['auto_reset_day'] = value as int;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          autoResetDay: value as int,
+        );
         break;
       case 'autoResetBandwidth':
-        body['auto_reset_bandwidth'] = value as num;
+        body = WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch(
+          autoResetBandwidth: value as num,
+        );
         break;
       default:
         return false;
     }
 
-    final response = await _dio.patch<Map<String, dynamic>>(
-      '/api/v2/low_admin_api/user_old_service/${widget.userId}',
-      data: body,
-    );
+    final response = await _restClient.fallback
+        .patchUserOldServiceApiV2LowAdminApiUserOldServiceUserIdPatch(
+          userId: widget.userId,
+          body: body,
+        );
 
-    if (response.statusCode == 200 && response.data?['is_success'] == true) {
+    if (response.isSuccess == true) {
       await _loadUserData();
       return true;
     }

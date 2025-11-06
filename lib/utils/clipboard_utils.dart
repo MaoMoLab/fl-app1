@@ -1,5 +1,3 @@
-// filepath: /Users/inprtx/git/hub/InPRTx/fl_app1/lib/utils/clipboard_utils.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -17,7 +15,6 @@ Future<void> copyToClipboard(BuildContext context, String text) async {
     );
   }
 }
-// filepath: /Users/inprtx/git/hub/InPRTx/fl_app1/lib/utils/format_utils.dart
 
 /// 格式化字节大小为人类可读格式
 String formatBytes(int bytes) {

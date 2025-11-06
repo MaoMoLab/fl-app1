@@ -1,5 +1,3 @@
-// filepath: /Users/inprtx/git/hub/InPRTx/fl_app1/lib/widgets/dashboard/announcement_card.dart
-
 import 'package:flutter/material.dart';
 
 /// 公告卡片组件

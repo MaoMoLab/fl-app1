@@ -1,5 +1,3 @@
-// filepath: /Users/inprtx/git/hub/InPRTx/fl_app1/lib/widgets/dashboard/status_card.dart
-
 import 'package:flutter/material.dart';
 
 /// 状态卡片组件

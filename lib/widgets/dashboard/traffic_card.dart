@@ -1,5 +1,3 @@
-// filepath: /Users/inprtx/git/hub/InPRTx/fl_app1/lib/widgets/dashboard/traffic_card.dart
-
 import 'package:fl_app1/utils/format_utils.dart';
 import 'package:flutter/material.dart';
 

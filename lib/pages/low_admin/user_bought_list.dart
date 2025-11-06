@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../api/models/web_sub_fastapi_routers_api_v_low_admin_api_user_bought_get_user_bought_response_result_list_data.dart';
@@ -321,10 +322,9 @@ class _UserBoughtListPageState extends State<UserBoughtListPage> {
             Row(
               children: [
                 Expanded(
-                  child: _buildInfoItem(
-                    Icons.person,
-                    '用户ID',
-                    record.userId.toString(),
+                  child: _buildClickableUserIdItem(
+                    context,
+                    record.userId,
                   ),
                 ),
                 Expanded(
@@ -392,6 +392,60 @@ class _UserBoughtListPageState extends State<UserBoughtListPage> {
           overflow: TextOverflow.ellipsis,
         ),
       ],
+    );
+  }
+
+  Widget _buildClickableUserIdItem(BuildContext context, int userId) {
+    return InkWell(
+      onTap: () {
+        context.go('/low_admin/user_v2/$userId');
+      },
+      borderRadius: BorderRadius.circular(4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.person, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  '用户ID',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  userId.toString(),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.open_in_new,
+                  size: 12,
+                  color: Theme
+                      .of(context)
+                      .colorScheme
+                      .primary,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

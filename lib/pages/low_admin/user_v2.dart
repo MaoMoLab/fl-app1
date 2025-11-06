@@ -6,6 +6,7 @@ import 'package:fl_app1/pages/low_admin/widgets/editable_user_v2_info_card.dart'
 import 'package:fl_app1/pages/low_admin/widgets/user_money_card.dart';
 import 'package:fl_app1/utils/auth/auth_export.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class UserV2Page extends StatefulWidget {
   final int userId;
@@ -140,6 +141,17 @@ class _UserV2PageState extends State<UserV2Page> {
     return Scaffold(
       appBar: AppBar(
         title: Text('用户信息 - ID: ${widget.userId}'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/low_admin/user_bought');
+            }
+          },
+          tooltip: '返回',
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

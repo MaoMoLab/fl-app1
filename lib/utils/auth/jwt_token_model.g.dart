@@ -44,6 +44,7 @@ SubjectAccess _$SubjectAccessFromJson(Map<String, dynamic> json) =>
       userId: (json['user_id'] as num?)?.toInt(),
       userNewId: json['user_new_id'] as String?,
       userName: json['user_name'] as String?,
+      isAdmin: json['is_admin'] as bool?,
     );
 
 Map<String, dynamic> _$SubjectAccessToJson(SubjectAccess instance) =>
@@ -52,6 +53,7 @@ Map<String, dynamic> _$SubjectAccessToJson(SubjectAccess instance) =>
       'user_id': instance.userId,
       'user_new_id': instance.userNewId,
       'user_name': instance.userName,
+      'is_admin': instance.isAdmin,
     };
 
 SubjectRefresh _$SubjectRefreshFromJson(Map<String, dynamic> json) =>

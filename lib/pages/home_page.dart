@@ -1,3 +1,4 @@
+import 'package:fl_app1/utils/auth/auth_store.dart';
 import 'package:fl_app1/widgets/auth_status_widget.dart';
 import 'package:fl_app1/widgets/simple_layout_with_menu.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final AuthStore _authStore = AuthStore();
+
+  @override
+  void initState() {
+    super.initState();
+    _authStore.addListener(_onAuthChanged);
+  }
+
+  @override
+  void dispose() {
+    _authStore.removeListener(_onAuthChanged);
+    super.dispose();
+  }
+
+  void _onAuthChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SimpleLayoutWithMenu(
@@ -32,11 +53,13 @@ class _MyHomePageState extends State<MyHomePage> {
               child: const Text('前往用户首页'),
             ),
             const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () => context.go('/low_admin'),
-              child: const Text('前往管理主页'),
-            ),
-            const SizedBox(height: 8),
+            if (_authStore.isAdmin) ...[
+              ElevatedButton(
+                onPressed: () => context.go('/low_admin'),
+                child: const Text('前往管理主页'),
+              ),
+              const SizedBox(height: 8),
+            ],
           ],
         ),
       ),

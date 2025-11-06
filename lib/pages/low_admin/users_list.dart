@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../api/models/result_list_data.dart';
+import '../../api/models/web_sub_fastapi_routers_api_v_grafana_admin_view_search_user_get_search_user_result_result_list_data.dart';
 import '../../api/rest_client.dart';
 import '../../utils/auth/auth_export.dart';
 import 'low_admin_layout.dart';
@@ -18,7 +18,9 @@ class _UsersListPageState extends State<UsersListPage> {
   final TextEditingController _searchController = TextEditingController();
   late final RestClient _restClient = createAuthenticatedClient();
 
-  List<ResultListData> _users = [];
+  List<
+      WebSubFastapiRoutersApiVGrafanaAdminViewSearchUserGetSearchUserResultResultListData> _users = [
+  ];
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -203,7 +205,8 @@ class _UsersListPageState extends State<UsersListPage> {
     );
   }
 
-  Widget _buildUserCard(ResultListData user) {
+  Widget _buildUserCard(
+      WebSubFastapiRoutersApiVGrafanaAdminViewSearchUserGetSearchUserResultResultListData user) {
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
     return Card(

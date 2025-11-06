@@ -38,6 +38,11 @@ class AuthStore extends ChangeNotifier {
 
   String? get userEmail => _accessJWTTokenPayload?.subjectAccess?.email;
 
+  bool get isAdmin {
+    if (!isAuthenticated) return false;
+    return _accessJWTTokenPayload?.subjectAccess?.isAdmin ?? false;
+  }
+
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     await _refreshThisToken();

@@ -55,6 +55,7 @@ class SubjectAccess {
     this.userId,
     this.userNewId,
     this.userName,
+    this.isAdmin,
   });
 
   factory SubjectAccess.fromJson(Map<String, dynamic> json) =>
@@ -70,6 +71,9 @@ class SubjectAccess {
 
   @JsonKey(name: 'user_name')
   final String? userName;
+
+  @JsonKey(name: 'is_admin')
+  final bool? isAdmin;
 
   Map<String, dynamic> toJson() => _$SubjectAccessToJson(this);
 }

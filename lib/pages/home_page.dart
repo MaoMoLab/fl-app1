@@ -1,3 +1,4 @@
+import 'package:fl_app1/pages/debug/base_url_page.dart';
 import 'package:fl_app1/utils/auth/auth_store.dart';
 import 'package:fl_app1/widgets/auth_status_widget.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,15 @@ class _MyHomePageState extends State<MyHomePage> {
           ElevatedButton(
             onPressed: () => context.go('/user/dashboard'),
             child: const Text('前往用户首页'),
+          ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const BaseUrlPage()));
+            },
+            child: const Text('查看 Base URL'),
           ),
           const SizedBox(height: 8),
           if (_authStore.isAdmin) ...[

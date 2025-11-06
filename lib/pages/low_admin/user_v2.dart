@@ -1,6 +1,7 @@
 import 'package:fl_app1/api/export.dart';
 import 'package:fl_app1/pages/low_admin/user_bought_records.dart';
 import 'package:fl_app1/pages/low_admin/user_money_recharge.dart';
+import 'package:fl_app1/pages/low_admin/user_pay_records.dart';
 import 'package:fl_app1/pages/low_admin/widgets/editable_user_old_service_card.dart';
 import 'package:fl_app1/pages/low_admin/widgets/editable_user_v2_info_card.dart';
 import 'package:fl_app1/pages/low_admin/widgets/user_money_card.dart';
@@ -136,6 +137,14 @@ class _UserV2PageState extends State<UserV2Page> {
     );
   }
 
+  Future<void> _navigateToPayRecords() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => UserPayRecordsPage(userId: widget.userId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -208,6 +217,19 @@ class _UserV2PageState extends State<UserV2Page> {
                       subtitle: const Text('查看和管理用户的购买记录'),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                       onTap: _navigateToBoughtRecords,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.account_balance_wallet,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      title: const Text('充值记录'),
+                      subtitle: const Text('查看和管理用户的充值记录'),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: _navigateToPayRecords,
                     ),
                   ),
                 ],

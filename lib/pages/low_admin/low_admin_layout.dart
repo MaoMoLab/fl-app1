@@ -31,6 +31,11 @@ class _LowAdminLayoutState extends State<LowAdminLayout> {
       route: '/low_admin/user_bought',
     ),
     NavigationItem(
+      icon: Icons.account_balance_wallet,
+      label: '充值记录',
+      route: '/low_admin/user_pay_list',
+    ),
+    NavigationItem(
       icon: Icons.settings,
       label: '设置',
       route: '/low_admin/settings',

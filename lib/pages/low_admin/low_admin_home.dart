@@ -75,6 +75,13 @@ class LowAdminHomePage extends StatelessWidget {
                 ),
                 _buildQuickActionCard(
                   context: context,
+                  icon: Icons.account_balance_wallet,
+                  title: '充值记录',
+                  description: '查看用户充值记录',
+                  onTap: () => context.go('/low_admin/user_pay_list'),
+                ),
+                _buildQuickActionCard(
+                  context: context,
                   icon: Icons.settings,
                   title: '系统设置',
                   description: '配置系统参数',

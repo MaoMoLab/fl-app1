@@ -1431,7 +1431,7 @@ abstract class FallbackClient {
   @DELETE('/api/v2/low_admin_api/user_pay_list/{user_pay_list_id}')
   Future<ErrorResponse>
   deleteUserPayListApiV2LowAdminApiUserPayListUserPayListIdDelete({
-    @Path('user_pay_list_id') required int userPayListId,
+    @Path('user_pay_list_id') required String userPayListId,
   });
 
   /// Put User Pay List.
@@ -1440,7 +1440,7 @@ abstract class FallbackClient {
   @PUT('/api/v2/low_admin_api/user_pay_list/{user_pay_list_id}')
   Future<ErrorResponse>
   putUserPayListApiV2LowAdminApiUserPayListUserPayListIdPut({
-    @Path('user_pay_list_id') required int userPayListId,
+    @Path('user_pay_list_id') required String userPayListId,
     @Body()
     required WebSubFastapiRoutersApiVLowAdminApiUserPayListPutParamsModel body,
   });

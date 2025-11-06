@@ -5079,7 +5079,7 @@ class _FallbackClient implements FallbackClient {
   @override
   Future<ErrorResponse>
   deleteUserPayListApiV2LowAdminApiUserPayListUserPayListIdDelete({
-    required int userPayListId,
+    required String userPayListId,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -5109,7 +5109,7 @@ class _FallbackClient implements FallbackClient {
   @override
   Future<ErrorResponse>
   putUserPayListApiV2LowAdminApiUserPayListUserPayListIdPut({
-    required int userPayListId,
+    required String userPayListId,
     required WebSubFastapiRoutersApiVLowAdminApiUserPayListPutParamsModel body,
   }) async {
     final _extra = <String, dynamic>{};

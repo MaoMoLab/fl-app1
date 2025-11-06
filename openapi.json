@@ -8101,7 +8101,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
+              "type": "string",
+              "format": "uuid",
               "title": "User Pay List Id"
             }
           }
@@ -8139,7 +8140,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
+              "type": "string",
+              "format": "uuid",
               "title": "User Pay List Id"
             }
           }

@@ -6,6 +6,7 @@ import 'pages/home_page.dart';
 import 'pages/low_admin/low_admin_home.dart';
 import 'pages/low_admin/settings.dart';
 import 'pages/low_admin/user_bought_list.dart';
+import 'pages/low_admin/user_pay_list.dart';
 import 'pages/low_admin/user_v2.dart';
 import 'pages/low_admin/users_list.dart';
 import 'pages/user/dashboard.dart';
@@ -50,6 +51,11 @@ final GoRouter router = GoRouter(
       path: '/low_admin/user_bought',
       name: 'low_admin_user_bought',
       builder: (context, state) => const UserBoughtListPage(),
+    ),
+    GoRoute(
+      path: '/low_admin/user_pay_list',
+      name: 'low_admin_user_pay_list',
+      builder: (context, state) => const UserPayListPage(),
     ),
     GoRoute(
       path: '/low_admin/settings',

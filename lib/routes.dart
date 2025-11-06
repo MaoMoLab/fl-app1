@@ -77,22 +77,22 @@ final GoRouter router = GoRouter(
           name: 'low_admin_settings',
           builder: (context, state) => const LowAdminSettingsPage(),
         ),
+        GoRoute(
+          path: '/low_admin/user_v2/:id',
+          name: 'user_v2',
+          builder: (context, state) {
+            final idStr = state.pathParameters['id'];
+            final id = int.tryParse(idStr?.toString() ?? '');
+            if (id == null) {
+              return const Scaffold(body: Center(child: Text('invalid id')));
+            }
+            return UserV2Page(userId: id);
+          },
+        ),
       ],
     ),
-
     // Keep user detail as a separate route (full screen)
-    GoRoute(
-      path: '/low_admin/user_v2/:id',
-      name: 'user_v2',
-      builder: (context, state) {
-        final idStr = state.pathParameters['id'];
-        final id = int.tryParse(idStr?.toString() ?? '');
-        if (id == null) {
-          return const Scaffold(body: Center(child: Text('invalid id')));
-        }
-        return UserV2Page(userId: id);
-      },
-    ),
+
   ],
   errorBuilder: (context, state) {
     final loc = state.uri.toString();
@@ -155,6 +155,8 @@ final GoRouter router = GoRouter(
 int _selectedIndexForLocation(String location) {
   // Default to dashboard index 0
   if (location.startsWith('/low_admin/users')) return 1;
+  // Treat user detail pages as part of the Users section
+  if (location.startsWith('/low_admin/user_v2')) return 1;
   if (location.startsWith('/low_admin/user_bought')) return 2;
   if (location.startsWith('/low_admin/user_pay_list')) return 3;
   if (location.startsWith('/low_admin/settings')) return 4;

@@ -68,6 +68,13 @@ class LowAdminHomePage extends StatelessWidget {
                 ),
                 _buildQuickActionCard(
                   context: context,
+                  icon: Icons.shopping_bag,
+                  title: '购买记录',
+                  description: '查看用户购买记录',
+                  onTap: () => context.go('/low_admin/user_bought'),
+                ),
+                _buildQuickActionCard(
+                  context: context,
                   icon: Icons.settings,
                   title: '系统设置',
                   description: '配置系统参数',

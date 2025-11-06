@@ -26,6 +26,11 @@ class _LowAdminLayoutState extends State<LowAdminLayout> {
       route: '/low_admin/users',
     ),
     NavigationItem(
+      icon: Icons.shopping_bag,
+      label: '购买记录',
+      route: '/low_admin/user_bought',
+    ),
+    NavigationItem(
       icon: Icons.settings,
       label: '设置',
       route: '/low_admin/settings',

@@ -4,7 +4,6 @@ import 'package:fl_app1/api/models/login_post_result_model.dart';
 import 'package:fl_app1/api/models/web_sub_fastapi_routers_api_v_auth_account_login_index_params_model.dart';
 import 'package:fl_app1/api/rest_client.dart';
 import 'package:fl_app1/utils/auth/auth_store.dart';
-import 'package:fl_app1/widgets/simple_layout_with_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -211,9 +210,9 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    return SimpleLayoutWithMenu(
-      title: '登录',
-      child: Center(
+    return Scaffold(
+      appBar: AppBar(title: const Text('登录')),
+      body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: AnimatedBuilder(

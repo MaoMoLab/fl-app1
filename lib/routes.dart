@@ -1,3 +1,4 @@
+import 'package:fl_app1/widgets/simple_layout_with_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,28 +18,43 @@ import 'version_page.dart';
 final GoRouter router = GoRouter(
   initialLocation: '/',
   routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      name: 'home',
-      builder: (context, state) =>
-          const MyHomePage(title: 'Flutter Demo Home Page'),
+    // Main app shell: show site navigation (menu/rail) for these routes
+    ShellRoute(
+      builder: (context, state, child) {
+        return SimpleLayoutWithMenu(title: '首页菜单栏', child: child);
+      },
+      routes: [
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (context, state) =>
+              const MyHomePage(title: 'Flutter Demo Home Page'),
+        ),
+        GoRoute(
+          path: '/version',
+          name: 'version',
+          builder: (context, state) => const VersionPage(),
+        ),
+        // Put login inside the main shell so the menu is visible on login
+        GoRoute(
+          path: '/auth/login',
+          name: 'auth_login',
+          builder: (context, state) => const LoginPage(),
+        ),
+      ],
     ),
-    GoRoute(
-      path: '/login',
-      name: 'login',
-      builder: (context, state) => const LoginPage(),
+    ShellRoute(
+      builder: (context, state, child) {
+        return SimpleLayoutWithMenu(title: '首页菜单栏', child: child);
+      },
+      routes: [
+        GoRoute(
+          path: '/user/dashboard',
+          name: 'dashboard',
+          builder: (context, state) => const DashboardPage(),
+        ),
+      ],
     ),
-    GoRoute(
-      path: '/user/dashboard',
-      name: 'dashboard',
-      builder: (context, state) => const DashboardPage(),
-    ),
-    GoRoute(
-      path: '/version',
-      name: 'version',
-      builder: (context, state) => const VersionPage(),
-    ),
-
     // ShellRoute keeps the LowAdminLayout persistent while only the child changes
     ShellRoute(
       builder: (context, state, child) {
@@ -91,8 +107,8 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
-    // Keep user detail as a separate route (full screen)
 
+    // Keep user detail as a separate route (full screen)
   ],
   errorBuilder: (context, state) {
     final loc = state.uri.toString();
@@ -115,26 +131,13 @@ final GoRouter router = GoRouter(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red,
-            ),
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
-            Text(
-              '找不到页面',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headlineMedium,
-            ),
+            Text('找不到页面', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(
               loc,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),

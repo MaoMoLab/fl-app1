@@ -1301,15 +1301,6 @@ abstract class FallbackClient {
     @Query('to_iso') DateTime? toIso,
   });
 
-  /// Get User Old Service
-  @GET('/api/v2/low_admin_api/user_old_service/{user_id}')
-  Future<
-    WebSubFastapiRoutersApiVLowAdminApiUserOldServiceGetUserOldServiceResponse
-  >
-  getUserOldServiceApiV2LowAdminApiUserOldServiceUserIdGet({
-    @Path('user_id') required int userId,
-  });
-
   /// Put User Old Service.
   ///
   /// 更新用户信息 - 需要提供所有必填字段（完全替换）.
@@ -1332,6 +1323,15 @@ abstract class FallbackClient {
     @Body()
     required WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch
     body,
+  });
+
+  /// Get User Old Service
+  @GET('/api/v2/low_admin_api/user_old_service/{user_id}')
+  Future<
+    WebSubFastapiRoutersApiVLowAdminApiUserOldServiceGetUserOldServiceResponse
+  >
+  getUserOldServiceApiV2LowAdminApiUserOldServiceUserIdGet({
+    @Path('user_id') required int userId,
   });
 
   /// Put User V2.

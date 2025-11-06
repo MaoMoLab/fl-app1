@@ -7439,43 +7439,6 @@
       }
     },
     "/api/v2/low_admin_api/user_old_service/{user_id}": {
-      "get": {
-        "summary": "Get User Old Service",
-        "operationId": "get_user_old_service_api_v2_low_admin_api_user_old_service__user_id__get",
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "User Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/web_sub3_fastapi__routers__api__v2__low_admin_api__user_old_service__GetUserOldServiceResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
       "put": {
         "summary": "Put User Old Service",
         "description": "更新用户信息 - 需要提供所有必填字段（完全替换）",
@@ -7556,6 +7519,43 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get User Old Service",
+        "operationId": "get_user_old_service_api_v2_low_admin_api_user_old_service__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/web_sub3_fastapi__routers__api__v2__low_admin_api__user_old_service__GetUserOldServiceResponse"
                 }
               }
             }

@@ -1,4 +1,5 @@
 import 'package:fl_app1/api/export.dart';
+import 'package:fl_app1/pages/low_admin/user_bought_records.dart';
 import 'package:fl_app1/pages/low_admin/user_money_recharge.dart';
 import 'package:fl_app1/pages/low_admin/widgets/editable_user_old_service_card.dart';
 import 'package:fl_app1/pages/low_admin/widgets/editable_user_v2_info_card.dart';
@@ -126,6 +127,14 @@ class _UserV2PageState extends State<UserV2Page> {
     }
   }
 
+  Future<void> _navigateToBoughtRecords() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => UserBoughtRecordsPage(userId: widget.userId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,6 +184,19 @@ class _UserV2PageState extends State<UserV2Page> {
                   UserMoneyCard(
                     moneyData: _userMoneyData,
                     onRecharge: _navigateToRecharge,
+                  ),
+                  const SizedBox(height: 16),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.shopping_bag,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      title: const Text('购买记录'),
+                      subtitle: const Text('查看和管理用户的购买记录'),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: _navigateToBoughtRecords,
+                    ),
                   ),
                 ],
               ),

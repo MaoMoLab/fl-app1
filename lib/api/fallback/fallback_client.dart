@@ -40,6 +40,7 @@ import '../models/post_func_block_ip_model.dart';
 import '../models/post_login_old_v_result_model.dart';
 import '../models/post_traffic_model.dart';
 import '../models/purchase_records_result.dart';
+import '../models/put_params_model.dart';
 import '../models/refresh_post_result_model.dart';
 import '../models/replace_email_response.dart';
 import '../models/request_email_code_params_model.dart';
@@ -1373,6 +1374,24 @@ abstract class FallbackClient {
   Future<GetUserBoughtResponse> getUserBoughtApiV2LowAdminApiUserBoughtGet({
     @Query('limit') int? limit = 3000,
     @Query('user_id') int? userId,
+  });
+
+  /// Delete User Bought.
+  ///
+  /// 删除用户购买记录.
+  @DELETE('/api/v2/low_admin_api/user_bought/{bought_id}')
+  Future<ErrorResponse>
+  deleteUserBoughtApiV2LowAdminApiUserBoughtBoughtIdDelete({
+    @Path('bought_id') required int boughtId,
+  });
+
+  /// Put User Bought.
+  ///
+  /// 更新用户购买记录 - 需要提供所有必填字段（完全替换）.
+  @PUT('/api/v2/low_admin_api/user_bought/{bought_id}')
+  Future<ErrorResponse> putUserBoughtApiV2LowAdminApiUserBoughtBoughtIdPut({
+    @Path('bought_id') required int boughtId,
+    @Body() required PutParamsModel body,
   });
 
   /// Get User V2 By User Id

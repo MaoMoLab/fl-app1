@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'pages/auth/account_login/login_page.dart';
 import 'pages/home_page.dart';
 import 'pages/low_admin/low_admin_routes.dart';
-import 'pages/user/dashboard.dart';
+import 'pages/user/user_routes.dart';
 import 'version_page.dart';
 
 /// 使用 go_router 的路由器实例
@@ -37,18 +37,10 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
-    ShellRoute(
-      builder: (context, state, child) {
-        return SimpleLayoutWithMenu(title: '首页菜单栏', child: child);
-      },
-      routes: [
-        GoRoute(
-          path: '/user/dashboard',
-          name: 'dashboard',
-          builder: (context, state) => const DashboardPage(),
-        ),
-      ],
-    ),
+
+    // User shell route (moved to its own file)
+    userShellRoute,
+
     // Low-admin packaged shell route
     lowAdminShellRoute,
 

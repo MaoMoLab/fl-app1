@@ -181,7 +181,6 @@ class _MenuItem {
 
 final List<_MenuItem> _mainMenuItems = [
   _MenuItem(icon: Icons.home, label: '首页', route: '/'),
-  _MenuItem(icon: Icons.dashboard, label: '用户首页', route: '/user/dashboard'),
   _MenuItem(
     icon: Icons.support_agent_outlined,
     label: '技术支持',

@@ -8,8 +8,8 @@ import '../../api/base_url.dart';
 ///
 /// Useful during development to quickly verify which base URL the app is
 /// currently using (dev vs. production, web vs. non-web).
-class BaseUrlPage extends StatelessWidget {
-  const BaseUrlPage({super.key});
+class SystemViewDefaultConst extends StatelessWidget {
+  const SystemViewDefaultConst({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class BaseUrlPage extends StatelessWidget {
                     // As a StatelessWidget we can't trigger setState; just
                     // pop+push to force rebuild in case runtime flags changed.
                     Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const BaseUrlPage()),
+                      MaterialPageRoute(builder: (_) => const SystemViewDefaultConst()),
                     );
                   },
                 ),

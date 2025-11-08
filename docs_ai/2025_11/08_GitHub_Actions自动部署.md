@@ -125,24 +125,24 @@
 1. 进入 Actions 标签
 2. 选择 "Deploy Flutter Web"
 3. 点击 "Run workflow"
-4. 分支输入框输入：`main`
-5. 点击运行
+4. "Use workflow from" 下拉框选择：`main`
+5. 点击绿色的 "Run workflow" 按钮
 
 ### 场景 2: 编译开发分支
 
 1. 进入 Actions 标签
 2. 选择 "Deploy Flutter Web"
 3. 点击 "Run workflow"
-4. 分支输入框输入：`dev` 或 `new-featrue` 或任意分支名
-5. 点击运行
+4. "Use workflow from" 下拉框选择：`dev` 或 `new-featrue`
+5. 点击绿色的 "Run workflow" 按钮
 
 ### 场景 3: 编译功能分支
 
 1. 进入 Actions 标签
 2. 选择 "Deploy Flutter Web"
 3. 点击 "Run workflow"
-4. 分支输入框输入：`feature/my-new-feature`
-5. 点击运行
+4. "Use workflow from" 下拉框选择：`feature/my-new-feature`
+5. 点击绿色的 "Run workflow" 按钮
 
 ## 提交信息格式
 

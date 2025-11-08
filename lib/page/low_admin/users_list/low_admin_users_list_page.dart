@@ -68,8 +68,8 @@ class _LowAdminUsersListPageState extends State<LowAdminUsersListPage> {
     final GetSearchUserResult result = await _restClient.fallback
         .getUserV2ApiV2LowAdminApiUserV2Get(
           q: query.isEmpty ? null : query,
-      sqlStmtLimit: _pageLimit,
-      sqlStmtOffset: _offset,
+      limit: _pageLimit,
+      offset: _offset,
         );
 
     if (!mounted) return;

@@ -74,8 +74,8 @@ class _LowAdminUserPayListPageState extends State<LowAdminUserPayListPage> {
 
     final result = await _restClient.fallback
         .getUserPayListApiV2LowAdminApiUserPayListGet(
-      sqlStmtLimit: _pageLimit,
-      sqlStmtOffset: _offset,
+      limit: _pageLimit,
+      offset: _offset,
       userId: userId,
         );
 

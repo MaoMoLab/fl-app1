@@ -76,8 +76,8 @@ class _LowAdminUserBoughtListPageState
     final WebSubFastapiRoutersApiVLowAdminApiUserBoughtGetUserBoughtResponse
     result = await _restClient.fallback
         .getUserBoughtApiV2LowAdminApiUserBoughtGet(
-      sqlStmtLimit: _pageLimit,
-      sqlStmtOffset: _offset,
+      limit: _pageLimit,
+      offset: _offset,
       userId: effectiveUserId,
     );
 

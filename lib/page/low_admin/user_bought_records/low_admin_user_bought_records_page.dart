@@ -78,8 +78,8 @@ class _LowAdminUserBoughtRecordsPageState
 
     final result = await _restClient.fallback
         .getUserBoughtApiV2LowAdminApiUserBoughtGet(
-      sqlStmtLimit: _pageLimit,
-      sqlStmtOffset: _offset,
+      limit: _pageLimit,
+      offset: _offset,
           userId: widget.userId,
         );
 

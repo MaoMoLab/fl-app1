@@ -6870,18 +6870,18 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
@@ -6889,7 +6889,7 @@
               "maximum": 10000,
               "minimum": 1,
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],
@@ -7029,18 +7029,18 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
@@ -7048,7 +7048,7 @@
               "maximum": 10000,
               "minimum": 1,
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],
@@ -7137,18 +7137,18 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
@@ -7156,7 +7156,7 @@
               "maximum": 10000,
               "minimum": 1,
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],
@@ -7245,18 +7245,18 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
@@ -7264,7 +7264,7 @@
               "maximum": 10000,
               "minimum": 1,
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],
@@ -7353,18 +7353,18 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
@@ -7372,7 +7372,7 @@
               "maximum": 10000,
               "minimum": 1,
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],
@@ -7459,18 +7459,18 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
@@ -7478,7 +7478,7 @@
               "maximum": 10000,
               "minimum": 1,
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],
@@ -7830,18 +7830,18 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "minimum": 0,
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
@@ -7849,7 +7849,7 @@
               "maximum": 10000,
               "minimum": 1,
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],
@@ -7900,23 +7900,23 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],
@@ -8143,23 +8143,23 @@
             }
           },
           {
-            "name": "sql_stmt_offset",
+            "name": "offset",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "default": 0,
-              "title": "Sql Stmt Offset"
+              "title": "Offset"
             }
           },
           {
-            "name": "sql_stmt_limit",
+            "name": "limit",
             "in": "query",
             "required": false,
             "schema": {
               "type": "integer",
               "default": 3000,
-              "title": "Sql Stmt Limit"
+              "title": "Limit"
             }
           }
         ],

@@ -181,7 +181,7 @@ final List<SidebarItemMenu> sidebarItemLogin = [
   const SidebarItemMenu(
     title: '设置',
     icon: Icons.settings_outlined,
-    to: '/settings',
+    to: '/system/settings',
   ),
   const SidebarItemMenu(title: '关于我们', icon: Icons.info_outline, to: '/about'),
 ];

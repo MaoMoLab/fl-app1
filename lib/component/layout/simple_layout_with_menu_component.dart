@@ -189,7 +189,8 @@ final List<_MenuItem> _mainMenuItems = [
 ];
 
 final List<_MenuItem> _otherMenuItems = [
-  _MenuItem(icon: Icons.settings_outlined, label: '设置', route: '/settings'),
+  _MenuItem(
+      icon: Icons.settings_outlined, label: '设置', route: '/system/settings'),
   _MenuItem(icon: Icons.info_outline, label: '关于', route: '/about'),
 ];
 

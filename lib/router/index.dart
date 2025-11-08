@@ -3,6 +3,7 @@ import 'package:fl_app1/page/auth/login/auth_login_page.dart';
 import 'package:fl_app1/page/debug/version/debug_version_page.dart';
 import 'package:fl_app1/page/home_page.dart';
 import 'package:fl_app1/router/low_admin_routes.dart';
+import 'package:fl_app1/router/system_routes.dart';
 import 'package:fl_app1/router/user_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -42,6 +43,7 @@ final GoRouter router = GoRouter(
 
     // Low-admin packaged shell route
     lowAdminShellRoute,
+    SystemShellRoute,
 
     // Keep user detail as a separate route (full screen)
   ],

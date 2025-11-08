@@ -1,11 +1,11 @@
 import 'package:fl_app1/page/low_admin/home/low_admin_home_page.dart';
 import 'package:fl_app1/page/low_admin/low_admin_layout.dart';
-import 'package:fl_app1/page/low_admin/settings/low_admin_settings_page.dart';
 import 'package:fl_app1/page/low_admin/user_bought_list/low_admin_user_bought_list_page.dart';
 import 'package:fl_app1/page/low_admin/user_detail/low_admin_user_detail_page.dart';
 import 'package:fl_app1/page/low_admin/user_pay_list/low_admin_user_pay_list_page.dart';
 import 'package:fl_app1/page/low_admin/users_list/low_admin_users_list_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
 /// Low admin child routes extracted from `routes.dart` to keep that file smaller
@@ -45,7 +45,13 @@ final RouteBase lowAdminShellRoute = ShellRoute(
     GoRoute(
       path: '/low_admin/settings',
       name: 'low_admin_settings',
-      builder: (context, state) => const LowAdminSettingsPage(),
+      builder: (context, state) {
+        // Redirect low_admin settings to system settings
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          context.go('/system/settings');
+        });
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      },
     ),
     GoRoute(
       path: '/low_admin/user_v2/:id',

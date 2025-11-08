@@ -44,7 +44,7 @@ class _UserNavigationRailComponentState
       '/user/subscribe-log',
       '/user/my-account',
       '/user/promote',
-      '/settings',
+      '/system/settings',
     ];
 
     if (index >= itemRoutes.length) return null;

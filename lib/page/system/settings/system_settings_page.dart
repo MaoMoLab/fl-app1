@@ -1,20 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class LowAdminSettingsPage extends StatefulWidget {
-  const LowAdminSettingsPage({super.key});
+class SystemSettingsPage extends StatefulWidget {
+  const SystemSettingsPage({super.key});
 
   @override
-  State<LowAdminSettingsPage> createState() => _LowAdminSettingsPageState();
+  State<SystemSettingsPage> createState() => _SystemSettingsPageState();
 }
 
-class _LowAdminSettingsPageState extends State<LowAdminSettingsPage> {
+class _SystemSettingsPageState extends State<SystemSettingsPage> {
+  // Keep parity with the low-admin settings UI
   bool _notificationsEnabled = true;
   bool _darkModeEnabled = false;
   String _selectedLanguage = '中文';
 
+  // Timezone setting moved to a dedicated page. Navigate there to edit.
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _showLanguageDialog() async {
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('选择语言'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('中文'),
+              leading: Icon(
+                _selectedLanguage == '中文'
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
+              ),
+              onTap: () => Navigator.pop(context, '中文'),
+            ),
+            ListTile(
+              title: const Text('English'),
+              leading: Icon(
+                _selectedLanguage == 'English'
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
+              ),
+              onTap: () => Navigator.pop(context, 'English'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('取消'),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null) {
+      setState(() => _selectedLanguage = result);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ShellRoute provides LowAdminLayout (menu). Return only the page content.
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
@@ -66,12 +116,9 @@ class _LowAdminSettingsPageState extends State<LowAdminSettingsPage> {
                 onTap: () {
                   showAboutDialog(
                     context: context,
-                    applicationName: '低权限管理后台',
+                    applicationName: '设置',
                     applicationVersion: '1.0.0',
-                    applicationIcon: const Icon(
-                      Icons.admin_panel_settings,
-                      size: 48,
-                    ),
+                    applicationIcon: const Icon(Icons.settings, size: 48),
                   );
                 },
               ),
@@ -90,6 +137,18 @@ class _LowAdminSettingsPageState extends State<LowAdminSettingsPage> {
           ),
         ),
         const SizedBox(height: 32),
+        Card(
+          child: ListTile(
+            leading: const Icon(Icons.schedule),
+            title: const Text('本软件本地时区（可选）'),
+            subtitle: const Text('在专用页面中设置时区'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {
+              context.go('/system/settings/local_time');
+            },
+          ),
+        ),
+        const SizedBox(height: 32),
         Center(
           child: Text(
             '设置功能开发中',
@@ -98,47 +157,5 @@ class _LowAdminSettingsPageState extends State<LowAdminSettingsPage> {
         ),
       ],
     );
-  }
-
-  Future<void> _showLanguageDialog() async {
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('选择语言'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text('中文'),
-              leading: Icon(
-                _selectedLanguage == '中文'
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_unchecked,
-              ),
-              onTap: () => Navigator.pop(context, '中文'),
-            ),
-            ListTile(
-              title: const Text('English'),
-              leading: Icon(
-                _selectedLanguage == 'English'
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_unchecked,
-              ),
-              onTap: () => Navigator.pop(context, 'English'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
-          ),
-        ],
-      ),
-    );
-
-    if (result != null) {
-      setState(() => _selectedLanguage = result);
-    }
   }
 }

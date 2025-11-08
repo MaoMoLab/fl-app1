@@ -5124,6 +5124,36 @@ class _FallbackClient implements FallbackClient {
   }
 
   @override
+  Future<ErrorResponse>
+  adminNotifyApiV2LowAdminApiUserPayListUserPayListIdIsFinishNotifyPost({
+    required String userPayListId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<ErrorResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/user_pay_list/${userPayListId}/is_finish_notify',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late ErrorResponse _value;
+    try {
+      _value = ErrorResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<CaptchaKeyModel> getCaptchaKeyApiV2CaptchaKeyGet({
     required CaptchaKeyTypeEnum captchaKeyType,
   }) async {

@@ -1440,6 +1440,15 @@ abstract class FallbackClient {
     required WebSubFastapiRoutersApiVLowAdminApiUserPayListPutParamsModel body,
   });
 
+  /// Admin Notify
+  @POST(
+    '/api/v2/low_admin_api/user_pay_list/{user_pay_list_id}/is_finish_notify',
+  )
+  Future<ErrorResponse>
+  adminNotifyApiV2LowAdminApiUserPayListUserPayListIdIsFinishNotifyPost({
+    @Path('user_pay_list_id') required String userPayListId,
+  });
+
   /// Get Captcha Key.
   ///
   /// 获取一次性验证码.

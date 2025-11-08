@@ -8229,6 +8229,46 @@
         }
       }
     },
+    "/api/v2/low_admin_api/user_pay_list/{user_pay_list_id}/is_finish_notify": {
+      "post": {
+        "summary": "Admin Notify",
+        "operationId": "admin_notify_api_v2_low_admin_api_user_pay_list__user_pay_list_id__is_finish_notify_post",
+        "parameters": [
+          {
+            "name": "user_pay_list_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User Pay List Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/captcha-key": {
       "get": {
         "summary": "Get Captcha Key",
@@ -9455,11 +9495,14 @@
         "properties": {
           "is_success": {
             "type": "boolean",
-            "title": "Is Success"
+            "title": "Is Success",
+            "default": false
           },
           "message": {
             "type": "string",
-            "title": "Message"
+            "title": "Message",
+            "description": "响应消息",
+            "default": "错误响应"
           }
         },
         "type": "object",

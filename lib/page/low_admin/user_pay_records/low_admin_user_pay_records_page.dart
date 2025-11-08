@@ -48,7 +48,9 @@ class _LowAdminUserPayRecordsPageState
     if (!_scrollController.hasClients) return;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final current = _scrollController.position.pixels;
-    if (current >= (maxScroll - 200) && !_isLoading && !_isLoadingMore &&
+    if (current >= (maxScroll - 200) &&
+        !_isLoading &&
+        !_isLoadingMore &&
         _hasMore) {
       _fetchRecords(isLoadMore: true);
     }
@@ -77,8 +79,8 @@ class _LowAdminUserPayRecordsPageState
 
     final result = await _restClient.fallback
         .getUserPayListApiV2LowAdminApiUserPayListGet(
-      limit: _pageLimit,
-      offset: _offset,
+          limit: _pageLimit,
+          offset: _offset,
           userId: widget.userId,
         );
 
@@ -94,8 +96,7 @@ class _LowAdminUserPayRecordsPageState
       if (result.isSuccess) {
         final fetched = result.resultList;
         if (isLoadMore) {
-          _payRecords = List.from(_payRecords)
-            ..addAll(fetched);
+          _payRecords = List.from(_payRecords)..addAll(fetched);
         } else {
           _payRecords = fetched;
         }
@@ -213,6 +214,72 @@ class _LowAdminUserPayRecordsPageState
     }
   }
 
+  Future<void> _confirmFinishPay(UserPayList record) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('确认完成充值'),
+          content: Text(
+            '是否确认为订单 ${record.tradeNo} 完成充值？\n\n'
+            '用户ID: ${record.userId}\n'
+            '金额: ¥${record.moneyAmount}',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('确认'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true && record.id != null) {
+      await _finishPay(record.id!);
+    }
+  }
+
+  Future<void> _finishPay(String payListId) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger.showSnackBar(
+      const SnackBar(content: Text('正在处理...'), duration: Duration(seconds: 1)),
+    );
+
+    final result = await _restClient.fallback
+        .adminNotifyApiV2LowAdminApiUserPayListUserPayListIdIsFinishNotifyPost(
+          userPayListId: payListId,
+        );
+
+    if (!mounted) return;
+
+    if (result.isSuccess) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('充值完成通知已发送'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // 刷新列表
+      await _loadUserPayRecords();
+    } else {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('操作失败: ${result.message}'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -271,8 +338,12 @@ class _LowAdminUserPayRecordsPageState
                   if (!_hasMore) {
                     return const Padding(
                       padding: EdgeInsets.symmetric(vertical: 24.0),
-                      child: Center(child: Text(
-                          '到底了', style: TextStyle(color: Colors.grey))),
+                      child: Center(
+                        child: Text(
+                          '到底了',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
                     );
                   }
                   return const SizedBox.shrink();
@@ -444,7 +515,8 @@ class _LowAdminUserPayRecordsPageState
                       Icons.calendar_today,
                       '创建时间',
                       dateFormat.format(
-                          tz.TZDateTime.from(record.createdAt!, tz.local)),
+                        tz.TZDateTime.from(record.createdAt!, tz.local),
+                      ),
                     ),
                   )
                 else
@@ -455,7 +527,8 @@ class _LowAdminUserPayRecordsPageState
                       Icons.update,
                       '更新时间',
                       dateFormat.format(
-                          tz.TZDateTime.from(record.updatedAt!, tz.local)),
+                        tz.TZDateTime.from(record.updatedAt!, tz.local),
+                      ),
                     ),
                   )
                 else
@@ -474,6 +547,21 @@ class _LowAdminUserPayRecordsPageState
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                if (!record.isFinish) ...[
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _confirmFinishPay(record),
+                      icon: const Icon(Icons.check_circle_outline),
+                      label: const Text('完成充值'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 OutlinedButton.icon(
                   onPressed: () => _editPayRecord(record),
                   icon: const Icon(Icons.edit, size: 18),

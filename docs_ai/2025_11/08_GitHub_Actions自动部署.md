@@ -23,8 +23,8 @@
 #### 2. 手动触发
 
 - 在 GitHub 仓库页面：Actions → Deploy Flutter Web → Run workflow
-- 可以手动输入任意分支名称进行编译
-- 默认分支：`main`
+- 使用 "Use workflow from" 下拉框选择任意分支
+- 点击 "Run workflow" 按钮执行
 
 ## 工作流程
 

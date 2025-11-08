@@ -42,6 +42,16 @@ class SystemDebugPage extends StatelessWidget {
               ),
               const Divider(height: 1),
               ListTile(
+                leading: const Icon(Icons.key),
+                title: const Text('JWT 令牌查看器'),
+                subtitle: const Text('查看和解析访问令牌与刷新令牌'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  context.go('/system/debug/jwt_token');
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
                 leading: const Icon(Icons.info_outline),
                 title: const Text('系统信息'),
                 subtitle: const Text('查看系统运行信息'),

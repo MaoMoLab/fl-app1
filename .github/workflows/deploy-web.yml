@@ -1,0 +1,67 @@
+name: Deploy Flutter Web
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: '输入要编译的分支名称（可以是任意分支）'
+        required: true
+        default: 'main'
+        type: string
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build web
+        run: flutter build web --release --wasm
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Clone target repository
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git clone git@github.com:MaoMoLab/fl-app1-web.git target-repo
+
+      - name: Copy build files
+        run: |
+          rm -rf target-repo/*
+          cp -r build/web/* target-repo/
+
+      - name: Commit and push
+        run: |
+          cd target-repo
+          git add .
+          BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
+          git diff --staged --quiet || git commit -m "Deploy from branch $BRANCH - commit ${{ github.sha }}"
+          git push origin main || git push origin master
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519
+

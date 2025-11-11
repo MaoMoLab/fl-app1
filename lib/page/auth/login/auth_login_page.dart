@@ -5,6 +5,7 @@ import 'package:fl_app1/api/models/web_sub_fastapi_routers_api_v_auth_account_lo
 import 'package:fl_app1/api/rest_client.dart';
 import 'package:fl_app1/store/service/auth/auth_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 class AuthLoginPage extends StatefulWidget {
@@ -136,6 +137,9 @@ class _AuthLoginPageState extends State<AuthLoginPage>
         result.result.refreshToken,
       );
 
+      // 通知系统保存自动填充凭据
+      TextInput.finishAutofillContext(shouldSave: true);
+
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -234,10 +238,11 @@ class _AuthLoginPageState extends State<AuthLoginPage>
                     children: [
                       const Text('使用邮箱和密码登录', style: TextStyle(fontSize: 18)),
                       const SizedBox(height: 12),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
+                      AutofillGroup(
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
                             TextFormField(
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
@@ -268,6 +273,7 @@ class _AuthLoginPageState extends State<AuthLoginPage>
                                   AutovalidateMode.onUserInteraction,
                               controller: _passwordController,
                               obscureText: true,
+                              autofillHints: const [AutofillHints.password],
                               textInputAction: TextInputAction.next,
                               decoration: const InputDecoration(
                                 labelText: '密码',
@@ -290,6 +296,7 @@ class _AuthLoginPageState extends State<AuthLoginPage>
                               controller: _twoFaController,
                               keyboardType: TextInputType.number,
                               maxLength: 6,
+                              autofillHints: const [AutofillHints.oneTimeCode],
                               textInputAction: TextInputAction.done,
                               decoration: const InputDecoration(
                                 labelText: '两步验证码 (可选)',
@@ -405,6 +412,7 @@ class _AuthLoginPageState extends State<AuthLoginPage>
                             ),
                           ],
                         ),
+                      ),
                       ),
                       const SizedBox(height: 8),
                       TextButton(

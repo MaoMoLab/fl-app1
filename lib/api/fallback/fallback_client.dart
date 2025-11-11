@@ -33,6 +33,7 @@ import '../models/index_get_result_model.dart';
 import '../models/login_post_result_model.dart';
 import '../models/login_web_version_enum.dart';
 import '../models/node_config.dart';
+import '../models/param_model_patch.dart';
 import '../models/post_add_alive_ip_model.dart';
 import '../models/post_add_detect_log_model.dart';
 import '../models/post_func_block_ip_model.dart';
@@ -107,12 +108,10 @@ import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_bought_get_us
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_bought_put_params_model.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_money_money_recharge_it_params_model.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_old_service_get_user_old_service_response.dart';
-import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_old_service_param_model_patch.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_old_service_param_model_put.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_pay_list_get_user_bought_response.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_pay_list_put_params_model.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_v_get_user_old_service_response.dart';
-import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_v_param_model_patch.dart';
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_v_param_model_put.dart';
 import '../models/web_sub_fastapi_routers_v_casino_function_sql_table_enum.dart';
 import '../models/web_sub_fastapi_routers_v_emby_function_sql_table_enum.dart';
@@ -1240,7 +1239,8 @@ abstract class FallbackClient {
   /// Get Search User
   @GET('/api/v2/grafana_admin_view/search_user')
   Future<GetSearchUserResult> getSearchUserApiV2GrafanaAdminViewSearchUserGet({
-    @Query('sql_stmt_limit') int? sqlStmtLimit = 3000,
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
     @Query('q') String? q,
     @Query('from_iso') DateTime? fromIso,
     @Query('to_iso') DateTime? toIso,
@@ -1256,7 +1256,8 @@ abstract class FallbackClient {
   /// Get View User
   @GET('/api/v2/grafana_admin_view/view_user')
   Future<GetViewUserResult> getViewUserApiV2GrafanaAdminViewViewUserGet({
-    @Query('sql_stmt_limit') int? sqlStmtLimit = 3000,
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
     @Query('q') String? q,
     @Query('from_iso') DateTime? fromIso,
     @Query('to_iso') DateTime? toIso,
@@ -1266,7 +1267,8 @@ abstract class FallbackClient {
   @GET('/api/v2/grafana_admin_view/view_user_bought')
   Future<GetViewUserBoughtResult>
   getViewUserBoughtApiV2GrafanaAdminViewViewUserBoughtGet({
-    @Query('sql_stmt_limit') int? sqlStmtLimit = 3000,
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
     @Query('q') String? q,
     @Query('from_iso') DateTime? fromIso,
     @Query('to_iso') DateTime? toIso,
@@ -1276,7 +1278,8 @@ abstract class FallbackClient {
   @GET('/api/v2/grafana_admin_view/user_data_history_ch')
   Future<UserDataHistoryResponse>
   getUserDataHistoryChApiV2GrafanaAdminViewUserDataHistoryChGet({
-    @Query('sql_stmt_limit') int? sqlStmtLimit = 3000,
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
     @Query('q') String? q,
     @Query('from_iso') DateTime? fromIso,
     @Query('to_iso') DateTime? toIso,
@@ -1285,7 +1288,8 @@ abstract class FallbackClient {
   /// Get User Traffic Log Full Ch
   @GET('/api/v2/grafana_view/user_traffic_log_full_ch')
   Future<void> getUserTrafficLogFullChApiV2GrafanaViewUserTrafficLogFullChGet({
-    @Query('sql_stmt_limit') int? sqlStmtLimit = 3000,
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
     @Query('q') String? q,
     @Query('from_iso') DateTime? fromIso,
     @Query('to_iso') DateTime? toIso,
@@ -1295,7 +1299,8 @@ abstract class FallbackClient {
   @GET('/api/v2/grafana_view/user_traffic_log_user_traffic')
   Future<void>
   getUserTrafficLogUserTrafficApiV2GrafanaViewUserTrafficLogUserTrafficGet({
-    @Query('sql_stmt_limit') int? sqlStmtLimit = 3000,
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
     @Query('q') String? q,
     @Query('from_iso') DateTime? fromIso,
     @Query('to_iso') DateTime? toIso,
@@ -1310,18 +1315,6 @@ abstract class FallbackClient {
     @Path('user_id') required int userId,
     @Body()
     required WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPut
-    body,
-  });
-
-  /// Patch User Old Service.
-  ///
-  /// 更新用户信息 - 只更新提供的字段.
-  @PATCH('/api/v2/low_admin_api/user_old_service/{user_id}')
-  Future<ErrorResponse>
-  patchUserOldServiceApiV2LowAdminApiUserOldServiceUserIdPatch({
-    @Path('user_id') required int userId,
-    @Body()
-    required WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch
     body,
   });
 
@@ -1349,8 +1342,7 @@ abstract class FallbackClient {
   @PATCH('/api/v2/low_admin_api/user_v2/{user_id}')
   Future<ErrorResponse> patchUserV2ApiV2LowAdminApiUserV2UserIdPatch({
     @Path('user_id') required int userId,
-    @Body()
-    required WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch body,
+    @Body() required ParamModelPatch body,
   });
 
   /// Get User V2 By User Id
@@ -1363,7 +1355,8 @@ abstract class FallbackClient {
   /// Get User V2
   @GET('/api/v2/low_admin_api/user_v2/')
   Future<GetSearchUserResult> getUserV2ApiV2LowAdminApiUserV2Get({
-    @Query('sql_stmt_limit') int? sqlStmtLimit = 3000,
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
     @Query('q') String? q,
     @Query('from_iso') DateTime? fromIso,
     @Query('to_iso') DateTime? toIso,
@@ -1375,6 +1368,7 @@ abstract class FallbackClient {
   @GET('/api/v2/low_admin_api/user_bought/')
   Future<WebSubFastapiRoutersApiVLowAdminApiUserBoughtGetUserBoughtResponse>
   getUserBoughtApiV2LowAdminApiUserBoughtGet({
+    @Query('offset') int? offset = 0,
     @Query('limit') int? limit = 3000,
     @Query('user_id') int? userId,
   });
@@ -1421,6 +1415,7 @@ abstract class FallbackClient {
   @GET('/api/v2/low_admin_api/user_pay_list/')
   Future<WebSubFastapiRoutersApiVLowAdminApiUserPayListGetUserBoughtResponse>
   getUserPayListApiV2LowAdminApiUserPayListGet({
+    @Query('offset') int? offset = 0,
     @Query('limit') int? limit = 3000,
     @Query('user_id') int? userId,
   });
@@ -1443,6 +1438,15 @@ abstract class FallbackClient {
     @Path('user_pay_list_id') required String userPayListId,
     @Body()
     required WebSubFastapiRoutersApiVLowAdminApiUserPayListPutParamsModel body,
+  });
+
+  /// Admin Notify
+  @POST(
+    '/api/v2/low_admin_api/user_pay_list/{user_pay_list_id}/is_finish_notify',
+  )
+  Future<ErrorResponse>
+  adminNotifyApiV2LowAdminApiUserPayListUserPayListIdIsFinishNotifyPost({
+    @Path('user_pay_list_id') required String userPayListId,
   });
 
   /// Get Captcha Key.

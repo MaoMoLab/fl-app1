@@ -1,10 +1,14 @@
-import 'package:fl_app1/utils/auth/auth_store.dart';
+import 'package:fl_app1/store/base_url_store.dart';
+import 'package:fl_app1/store/local_time_store.dart';
+import 'package:fl_app1/store/service/auth/auth_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
-import 'routes.dart';
+import 'router/index.dart';
 
 // 全局 ScaffoldMessenger key，用于在任何地方显示 SnackBar
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -14,6 +18,24 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting();
   Intl.defaultLocale = 'zh_CN';
+  tz.initializeTimeZones();
+
+  // Initialize BaseUrlStore to get saved base URL
+  await BaseUrlStore().init();
+
+  // Initialize LocalTimeStore to get saved timezone
+  await LocalTimeStore().init();
+
+  // Get saved timezone or use default Asia/Shanghai
+  final String timeZoneName = LocalTimeStore().fixedTimeZone ?? 'Asia/Shanghai';
+
+  try {
+    final tz.Location location = tz.getLocation(timeZoneName);
+    tz.setLocalLocation(location);
+  } catch (e) {
+    // If timezone is invalid, fallback to Asia/Shanghai
+    tz.setLocalLocation(tz.getLocation('Asia/Shanghai'));
+  }
 
   // Initialize auth store
   await AuthStore().init();
@@ -59,10 +81,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('zh', 'CN'),
-        Locale('en', 'US'),
-      ],
+      supportedLocales: const [Locale('zh', 'CN'), Locale('en', 'US')],
       locale: const Locale('zh', 'CN'),
       theme: ThemeData(
         // This is the theme of your application.

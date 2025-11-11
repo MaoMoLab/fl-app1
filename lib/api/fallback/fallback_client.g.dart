@@ -4371,14 +4371,16 @@ class _FallbackClient implements FallbackClient {
 
   @override
   Future<GetSearchUserResult> getSearchUserApiV2GrafanaAdminViewSearchUserGet({
-    int? sqlStmtLimit = 3000,
+    int? offset = 0,
+    int? limit = 3000,
     String? q,
     DateTime? fromIso,
     DateTime? toIso,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'sql_stmt_limit': sqlStmtLimit,
+      r'offset': offset,
+      r'limit': limit,
       r'q': q,
       r'from_iso': fromIso?.toIso8601String(),
       r'to_iso': toIso?.toIso8601String(),
@@ -4438,14 +4440,16 @@ class _FallbackClient implements FallbackClient {
 
   @override
   Future<GetViewUserResult> getViewUserApiV2GrafanaAdminViewViewUserGet({
-    int? sqlStmtLimit = 3000,
+    int? offset = 0,
+    int? limit = 3000,
     String? q,
     DateTime? fromIso,
     DateTime? toIso,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'sql_stmt_limit': sqlStmtLimit,
+      r'offset': offset,
+      r'limit': limit,
       r'q': q,
       r'from_iso': fromIso?.toIso8601String(),
       r'to_iso': toIso?.toIso8601String(),
@@ -4477,14 +4481,16 @@ class _FallbackClient implements FallbackClient {
   @override
   Future<GetViewUserBoughtResult>
   getViewUserBoughtApiV2GrafanaAdminViewViewUserBoughtGet({
-    int? sqlStmtLimit = 3000,
+    int? offset = 0,
+    int? limit = 3000,
     String? q,
     DateTime? fromIso,
     DateTime? toIso,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'sql_stmt_limit': sqlStmtLimit,
+      r'offset': offset,
+      r'limit': limit,
       r'q': q,
       r'from_iso': fromIso?.toIso8601String(),
       r'to_iso': toIso?.toIso8601String(),
@@ -4516,14 +4522,16 @@ class _FallbackClient implements FallbackClient {
   @override
   Future<UserDataHistoryResponse>
   getUserDataHistoryChApiV2GrafanaAdminViewUserDataHistoryChGet({
-    int? sqlStmtLimit = 3000,
+    int? offset = 0,
+    int? limit = 3000,
     String? q,
     DateTime? fromIso,
     DateTime? toIso,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'sql_stmt_limit': sqlStmtLimit,
+      r'offset': offset,
+      r'limit': limit,
       r'q': q,
       r'from_iso': fromIso?.toIso8601String(),
       r'to_iso': toIso?.toIso8601String(),
@@ -4554,14 +4562,16 @@ class _FallbackClient implements FallbackClient {
 
   @override
   Future<void> getUserTrafficLogFullChApiV2GrafanaViewUserTrafficLogFullChGet({
-    int? sqlStmtLimit = 3000,
+    int? offset = 0,
+    int? limit = 3000,
     String? q,
     DateTime? fromIso,
     DateTime? toIso,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'sql_stmt_limit': sqlStmtLimit,
+      r'offset': offset,
+      r'limit': limit,
       r'q': q,
       r'from_iso': fromIso?.toIso8601String(),
       r'to_iso': toIso?.toIso8601String(),
@@ -4585,14 +4595,16 @@ class _FallbackClient implements FallbackClient {
   @override
   Future<void>
   getUserTrafficLogUserTrafficApiV2GrafanaViewUserTrafficLogUserTrafficGet({
-    int? sqlStmtLimit = 3000,
+    int? offset = 0,
+    int? limit = 3000,
     String? q,
     DateTime? fromIso,
     DateTime? toIso,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'sql_stmt_limit': sqlStmtLimit,
+      r'offset': offset,
+      r'limit': limit,
       r'q': q,
       r'from_iso': fromIso?.toIso8601String(),
       r'to_iso': toIso?.toIso8601String(),
@@ -4627,39 +4639,6 @@ class _FallbackClient implements FallbackClient {
     _data.addAll(body.toJson());
     final _options = _setStreamType<ErrorResponse>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
-          .compose(
-        _dio.options,
-        '/api/v2/low_admin_api/user_old_service/${userId}',
-        queryParameters: queryParameters,
-        data: _data,
-      )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, Object?>>(_options);
-    late ErrorResponse _value;
-    try {
-      _value = ErrorResponse.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<ErrorResponse>
-  patchUserOldServiceApiV2LowAdminApiUserOldServiceUserIdPatch({
-    required int userId,
-    required WebSubFastapiRoutersApiVLowAdminApiUserOldServiceParamModelPatch
-    body,
-  }) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(body.toJson());
-    final _options = _setStreamType<ErrorResponse>(
-      Options(method: 'PATCH', headers: _headers, extra: _extra)
           .compose(
         _dio.options,
         '/api/v2/low_admin_api/user_old_service/${userId}',
@@ -4755,7 +4734,7 @@ class _FallbackClient implements FallbackClient {
   @override
   Future<ErrorResponse> patchUserV2ApiV2LowAdminApiUserV2UserIdPatch({
     required int userId,
-    required WebSubFastapiRoutersApiVLowAdminApiUserVParamModelPatch body,
+    required ParamModelPatch body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -4825,14 +4804,16 @@ class _FallbackClient implements FallbackClient {
 
   @override
   Future<GetSearchUserResult> getUserV2ApiV2LowAdminApiUserV2Get({
-    int? sqlStmtLimit = 3000,
+    int? offset = 0,
+    int? limit = 3000,
     String? q,
     DateTime? fromIso,
     DateTime? toIso,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'sql_stmt_limit': sqlStmtLimit,
+      r'offset': offset,
+      r'limit': limit,
       r'q': q,
       r'from_iso': fromIso?.toIso8601String(),
       r'to_iso': toIso?.toIso8601String(),
@@ -4864,11 +4845,13 @@ class _FallbackClient implements FallbackClient {
   @override
   Future<WebSubFastapiRoutersApiVLowAdminApiUserBoughtGetUserBoughtResponse>
   getUserBoughtApiV2LowAdminApiUserBoughtGet({
+    int? offset = 0,
     int? limit = 3000,
     int? userId,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
+      r'offset': offset,
       r'limit': limit,
       r'user_id': userId,
     };
@@ -5034,11 +5017,13 @@ class _FallbackClient implements FallbackClient {
   @override
   Future<WebSubFastapiRoutersApiVLowAdminApiUserPayListGetUserBoughtResponse>
   getUserPayListApiV2LowAdminApiUserPayListGet({
+    int? offset = 0,
     int? limit = 3000,
     int? userId,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
+      r'offset': offset,
       r'limit': limit,
       r'user_id': userId,
     };
@@ -5122,6 +5107,36 @@ class _FallbackClient implements FallbackClient {
           .compose(
         _dio.options,
         '/api/v2/low_admin_api/user_pay_list/${userPayListId}',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late ErrorResponse _value;
+    try {
+      _value = ErrorResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<ErrorResponse>
+  adminNotifyApiV2LowAdminApiUserPayListUserPayListIdIsFinishNotifyPost({
+    required String userPayListId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<ErrorResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/user_pay_list/${userPayListId}/is_finish_notify',
         queryParameters: queryParameters,
         data: _data,
       )

@@ -1,0 +1,639 @@
+import 'package:fl_app1/api/models/user_pay_list.dart';
+import 'package:fl_app1/api/rest_client.dart';
+import 'package:fl_app1/store/service/auth/auth_export.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as tz;
+
+class LowAdminUserPayListPage extends StatefulWidget {
+  const LowAdminUserPayListPage({super.key});
+
+  @override
+  State<LowAdminUserPayListPage> createState() =>
+      _LowAdminUserPayListPageState();
+}
+
+class _LowAdminUserPayListPageState extends State<LowAdminUserPayListPage> {
+  final TextEditingController _userIdController = TextEditingController();
+  late final RestClient _restClient = createAuthenticatedClient();
+
+  List<UserPayList> _payRecords = [];
+  bool _isLoading = false;
+  bool _isLoadingMore = false;
+  String? _errorMessage;
+
+  // Paging
+  final ScrollController _scrollController = ScrollController();
+  static const int _pageLimit = 50;
+  int _offset = 0;
+  bool _hasMore = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _fetchRecords(userId: null);
+  }
+
+  @override
+  void dispose() {
+    _userIdController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final current = _scrollController.position.pixels;
+    if (current >= (maxScroll - 200) && !_isLoading && !_isLoadingMore &&
+        _hasMore) {
+      final text = _userIdController.text.trim();
+      final int? userId = text.isEmpty ? null : int.tryParse(text);
+      _fetchRecords(userId: userId, isLoadMore: true);
+    }
+  }
+
+  Future<void> _fetchRecords({int? userId, bool isLoadMore = false}) async {
+    if (isLoadMore) {
+      if (_isLoadingMore || !_hasMore) return;
+      setState(() {
+        _isLoadingMore = true;
+        _errorMessage = null;
+      });
+    } else {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+        _offset = 0;
+        _hasMore = true;
+      });
+    }
+
+    final result = await _restClient.fallback
+        .getUserPayListApiV2LowAdminApiUserPayListGet(
+      limit: _pageLimit,
+      offset: _offset,
+      userId: userId,
+        );
+
+    if (!mounted) return;
+
+    setState(() {
+      if (isLoadMore) {
+        _isLoadingMore = false;
+      } else {
+        _isLoading = false;
+      }
+
+      if (result.isSuccess) {
+        final fetched = result.resultList;
+        if (isLoadMore) {
+          _payRecords = List.from(_payRecords)
+            ..addAll(fetched);
+        } else {
+          _payRecords = fetched;
+        }
+
+        if (fetched.length < _pageLimit) {
+          _hasMore = false;
+        } else {
+          _hasMore = true;
+          _offset += _pageLimit;
+        }
+
+        if (_payRecords.isEmpty) {
+          _errorMessage =
+          userId == null ? '暂无充值记录' : '该用户暂无充值记录';
+        }
+      } else {
+        _errorMessage = result.message;
+        _payRecords = <UserPayList>[];
+      }
+    });
+  }
+
+  Future<void> _loadAllRecords() async {
+    // backward-compatible wrapper
+    await _fetchRecords(userId: null);
+  }
+
+  Future<void> _searchByUserId() async {
+    final String userIdText = _userIdController.text.trim();
+    if (userIdText.isEmpty) {
+      await _fetchRecords(userId: null);
+      return;
+    }
+
+    final int? userId = int.tryParse(userIdText);
+    if (userId == null) {
+      setState(() {
+        _errorMessage = '请输入有效的用户ID';
+        _payRecords = <UserPayList>[];
+      });
+      return;
+    }
+    await _fetchRecords(userId: userId);
+  }
+
+  Future<void> _confirmFinishPay(UserPayList record) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('确认完成充值'),
+          content: Text(
+            '是否确认为订单 ${record.tradeNo} 完成充值？\n\n'
+                '用户ID: ${record.userId}\n'
+                '金额: ¥${record.moneyAmount}',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('取消'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('确认'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true && record.id != null) {
+      await _finishPay(record.id!);
+    }
+  }
+
+  Future<void> _finishPay(String payListId) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('正在处理...'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+
+    final result = await _restClient.fallback
+        .adminNotifyApiV2LowAdminApiUserPayListUserPayListIdIsFinishNotifyPost(
+      userPayListId: payListId,
+    );
+
+    if (!mounted) return;
+
+    if (result.isSuccess) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('充值完成通知已发送'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // 刷新列表
+      final text = _userIdController.text.trim();
+      final int? userId = text.isEmpty ? null : int.tryParse(text);
+      await _fetchRecords(userId: userId);
+    } else {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('操作失败: ${result.message}'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // ShellRoute provides LowAdminLayout (menu). Return only the page content.
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _userIdController,
+                  decoration: InputDecoration(
+                    labelText: '用户ID',
+                    hintText: '输入用户ID搜索，留空查询所有记录',
+                    prefixIcon: const Icon(Icons.person_search),
+                    suffixIcon: _userIdController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _userIdController.clear();
+                              setState(() {});
+                            },
+                          )
+                        : null,
+                    border: const OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.number,
+                  onSubmitted: (_) => _searchByUserId(),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                onPressed: _isLoading ? null : _searchByUserId,
+                icon: const Icon(Icons.search),
+                label: const Text('搜索'),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        _userIdController.clear();
+                        _loadAllRecords();
+                      },
+                icon: const Icon(Icons.refresh),
+                label: const Text('全部'),
+              ),
+            ],
+          ),
+        ),
+        Expanded(child: _buildContent()),
+      ],
+    );
+  }
+
+  Widget _buildContent() {
+    if (_isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('加载中...'),
+          ],
+        ),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 80, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              _errorMessage!,
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _userIdController.text.isEmpty
+                  ? _loadAllRecords
+                  : _searchByUserId,
+              icon: const Icon(Icons.refresh),
+              label: const Text('重试'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_payRecords.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.account_balance_wallet_outlined,
+              size: 80,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '暂无充值记录',
+              style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '输入用户ID搜索指定用户的充值记录',
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      controller: _scrollController, // keep as controller
+      padding: const EdgeInsets.all(16.0),
+      itemCount: _payRecords.length + 1,
+      itemBuilder: (context, index) {
+        if (index < _payRecords.length) {
+          final record = _payRecords[index];
+          return _buildPayCard(record);
+        }
+        if (_isLoadingMore) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (!_hasMore) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 24.0),
+            child: Center(
+                child: Text('到底了', style: TextStyle(color: Colors.grey))),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _buildPayCard(UserPayList record) {
+    final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12.0),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.account_balance_wallet,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () async {
+                                final tradeNo = record.tradeNo;
+                                final messenger = ScaffoldMessenger.of(context);
+                                await Clipboard.setData(
+                                  ClipboardData(text: tradeNo),
+                                );
+                                messenger.showSnackBar(
+                                  SnackBar(
+                                    content: Text('已复制交易单号: $tradeNo'),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      '交易单号: ${record.tradeNo}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Icon(Icons.copy, size: 14),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: record.isFinish
+                                  ? Colors.green.withValues(alpha: 0.2)
+                                  : Colors.orange.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              record.isFinish ? '已完成' : '未完成',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: record.isFinish
+                                    ? Colors.green[700]
+                                    : Colors.orange[700],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      InkWell(
+                        onTap: () async {
+                          final recordId = record.id ?? '';
+                          final messenger = ScaffoldMessenger.of(context);
+                          await Clipboard.setData(
+                            ClipboardData(text: recordId),
+                          );
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text('已复制记录ID: $recordId'),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '记录ID: ${record.id}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(Icons.copy, size: 12, color: Colors.grey[600]),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildClickableUserIdItem(context, record.userId),
+                ),
+                Expanded(
+                  child: _buildInfoItem(
+                    Icons.attach_money,
+                    '金额',
+                    '¥${record.moneyAmount}',
+                  ),
+                ),
+                Expanded(
+                  child: _buildInfoItem(
+                    Icons.payment,
+                    '支付方式',
+                    '方式${record.payMethodId}',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                if (record.createdAt != null)
+                  Expanded(
+                    child: _buildInfoItem(
+                      Icons.calendar_today,
+                      '创建时间',
+                      dateFormat.format(
+                          tz.TZDateTime.from(record.createdAt!, tz.local)),
+                    ),
+                  )
+                else
+                  const Expanded(child: SizedBox()),
+                if (record.updatedAt != null)
+                  Expanded(
+                    child: _buildInfoItem(
+                      Icons.update,
+                      '更新时间',
+                      dateFormat.format(
+                          tz.TZDateTime.from(record.updatedAt!, tz.local)),
+                    ),
+                  )
+                else
+                  const Expanded(child: SizedBox()),
+              ],
+            ),
+            if (record.invoiceId != null) ...[
+              const SizedBox(height: 12),
+              _buildInfoItem(Icons.receipt, '发票ID', record.invoiceId!),
+            ],
+            if (record.remark != null && record.remark!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              _buildInfoItem(Icons.note, '备注', record.remark!),
+            ],
+            if (!record.isFinish) ...[
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _confirmFinishPay(record),
+                  icon: const Icon(Icons.check_circle_outline),
+                  label: const Text('完成充值'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(IconData icon, String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 16, color: Colors.grey[600]),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildClickableUserIdItem(BuildContext context, int userId) {
+    return InkWell(
+      onTap: () {
+        context.go('/low_admin/user_v2/$userId');
+      },
+      borderRadius: BorderRadius.circular(4),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.person, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  '用户ID',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  userId.toString(),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.open_in_new,
+                  size: 12,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

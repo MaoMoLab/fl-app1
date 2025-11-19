@@ -2,7 +2,6 @@ import 'package:fl_app1/api/export.dart';
 import 'package:fl_app1/component/low_admin/editable_user_old_service_card_component.dart';
 import 'package:fl_app1/component/low_admin/editable_user_v2_info_card_component.dart';
 import 'package:fl_app1/component/low_admin/user_money_card_component.dart';
-import 'package:fl_app1/page/low_admin/user_bought_records/low_admin_user_bought_records_page.dart';
 import 'package:fl_app1/page/low_admin/user_money_recharge/low_admin_user_money_recharge_page.dart';
 import 'package:fl_app1/page/low_admin/user_pay_records/low_admin_user_pay_records_page.dart';
 import 'package:fl_app1/store/service/auth/auth_export.dart';
@@ -141,12 +140,8 @@ class _LowAdminUserDetailPageState extends State<LowAdminUserDetailPage> {
   }
 
   Future<void> _navigateToBoughtRecords() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) =>
-            LowAdminUserBoughtRecordsPage(userId: widget.userId),
-      ),
-    );
+    // 导航到购买记录列表页面，并带上user_id查询参数
+    context.go('/low_admin/user_bought?q=user_id:${widget.userId}');
   }
 
   Future<void> _navigateToPayRecords() async {

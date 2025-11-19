@@ -13,7 +13,7 @@ class LowAdminUserBoughtRecordsPage extends StatelessWidget {
         title: Text('购买记录 - 用户ID: $userId'),
       ),
       body: BoughtRecordsListComponent(
-        userId: userId,
+        q: 'user_id:$userId',
         isShowActions: true,
         isEnableUserIdNavigation: false,
       ),

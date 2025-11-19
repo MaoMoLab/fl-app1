@@ -1,5 +1,6 @@
 import 'package:fl_app1/component/bought_records/bought_records_list_component.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LowAdminUserBoughtListPage extends StatefulWidget {
   const LowAdminUserBoughtListPage({super.key});
@@ -12,7 +13,31 @@ class LowAdminUserBoughtListPage extends StatefulWidget {
 class _LowAdminUserBoughtListPageState
     extends State<LowAdminUserBoughtListPage> {
   final TextEditingController _userIdController = TextEditingController();
-  int? _filterUserId;
+  String? _queryString;
+
+  @override
+  void initState() {
+    super.initState();
+    // 延迟读取URL参数，确保GoRouter已经初始化
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadQueryFromUrl();
+    });
+  }
+
+  void _loadQueryFromUrl() {
+    final uri = GoRouterState.of(context).uri;
+    final qParam = uri.queryParameters['q'];
+    if (qParam != null && qParam.isNotEmpty) {
+      // 解析 user_id:xxx 格式
+      if (qParam.startsWith('user_id:')) {
+        final userId = qParam.substring('user_id:'.length);
+        _userIdController.text = userId;
+      }
+      setState(() {
+        _queryString = qParam;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -23,14 +48,23 @@ class _LowAdminUserBoughtListPageState
   void _searchByUserId() {
     final text = _userIdController.text.trim();
     setState(() {
-      _filterUserId = text.isEmpty ? null : int.tryParse(text);
+      if (text.isEmpty) {
+        _queryString = null;
+      } else {
+        final userId = int.tryParse(text);
+        if (userId != null) {
+          _queryString = 'user_id:$userId';
+        } else {
+          _queryString = null;
+        }
+      }
     });
   }
 
   void _clearFilter() {
     _userIdController.clear();
     setState(() {
-      _filterUserId = null;
+      _queryString = null;
     });
   }
 
@@ -84,8 +118,8 @@ class _LowAdminUserBoughtListPageState
         ),
         Expanded(
           child: BoughtRecordsListComponent(
-            key: ValueKey(_filterUserId),
-            userId: _filterUserId,
+            key: ValueKey(_queryString),
+            q: _queryString,
             isShowActions: false,
             isEnableUserIdNavigation: true,
           ),

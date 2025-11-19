@@ -12,10 +12,10 @@ import 'package:timezone/timezone.dart' as tz;
 /// - 分页加载
 /// - 下拉刷新
 /// - 编辑和删除记录
-/// - 按用户ID筛选（可选）
+/// - 按查询条件筛选（可选）
 class BoughtRecordsListComponent extends StatefulWidget {
-  /// 指定用户ID，如果为null则显示所有记录
-  final int? userId;
+  /// 搜索查询字符串，格式如 "user_id:123"，如果为null则显示所有记录
+  final String? q;
 
   /// 是否显示编辑和删除按钮
   final bool isShowActions;
@@ -25,7 +25,7 @@ class BoughtRecordsListComponent extends StatefulWidget {
 
   const BoughtRecordsListComponent({
     super.key,
-    this.userId,
+    this.q,
     this.isShowActions = true,
     this.isEnableUserIdNavigation = false,
   });
@@ -98,7 +98,7 @@ class _BoughtRecordsListComponentState
         .getUserBoughtApiV2LowAdminApiUserBoughtGet(
           limit: _pageLimit,
           offset: _offset,
-          userId: widget.userId,
+          q: widget.q,
         );
 
     if (!mounted) return;
@@ -126,7 +126,7 @@ class _BoughtRecordsListComponentState
         }
 
         if (_boughtRecords.isEmpty) {
-          _errorMessage = widget.userId == null ? '暂无购买记录' : '该用户暂无购买记录';
+          _errorMessage = widget.q == null ? '暂无购买记录' : '该用户暂无购买记录';
         }
       } else {
         _errorMessage = result.message;

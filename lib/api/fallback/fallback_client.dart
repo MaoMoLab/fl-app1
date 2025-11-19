@@ -25,6 +25,8 @@ import '../models/get_csrf_token_result.dart';
 import '../models/get_dashboard_result_model.dart';
 import '../models/get_me_get_result_model.dart';
 import '../models/get_old_service_result_model.dart';
+import '../models/get_old_service_shop_list_response.dart';
+import '../models/get_old_service_shop_response.dart';
 import '../models/get_search_user_result.dart';
 import '../models/get_service_old_shop_result.dart';
 import '../models/get_user_money_response.dart';
@@ -35,6 +37,7 @@ import '../models/index_get_result_model.dart';
 import '../models/login_post_result_model.dart';
 import '../models/login_web_version_enum.dart';
 import '../models/node_config.dart';
+import '../models/old_service_shop_input.dart';
 import '../models/post_add_alive_ip_model.dart';
 import '../models/post_add_detect_log_model.dart';
 import '../models/post_func_block_ip_model.dart';
@@ -1423,6 +1426,34 @@ abstract class FallbackClient {
   Future<ErrorResponse>
   adminNotifyApiV2LowAdminApiUserPayListUserPayListIdIsFinishNotifyPost({
     @Path('user_pay_list_id') required String userPayListId,
+  });
+
+  /// Put Old Service Shop.
+  ///
+  /// 更新用户信息 - 需要提供所有必填字段（完全替换）.
+  @PUT('/api/v2/low_admin_api/old_service_shop/{shop_id}')
+  Future<ErrorResponse>
+  putOldServiceShopApiV2LowAdminApiOldServiceShopShopIdPut({
+    @Path('shop_id') required int shopId,
+    @Body() required OldServiceShopInput body,
+  });
+
+  /// Get Old Service Shop By Shop Id
+  @GET('/api/v2/low_admin_api/old_service_shop/{shop_id}')
+  Future<GetOldServiceShopResponse>
+  getOldServiceShopByShopIdApiV2LowAdminApiOldServiceShopShopIdGet({
+    @Path('shop_id') required int shopId,
+  });
+
+  /// Get Old Service Shop
+  @GET('/api/v2/low_admin_api/old_service_shop/')
+  Future<GetOldServiceShopListResponse>
+  getOldServiceShopApiV2LowAdminApiOldServiceShopGet({
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
+    @Query('q') String? q,
+    @Query('from_iso') DateTime? fromIso,
+    @Query('to_iso') DateTime? toIso,
   });
 
   /// Get Captcha Key.

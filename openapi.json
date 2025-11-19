@@ -8133,6 +8133,196 @@
         }
       }
     },
+    "/api/v2/low_admin_api/old_service_shop/{shop_id}": {
+      "put": {
+        "summary": "Put Old Service Shop",
+        "description": "更新用户信息 - 需要提供所有必填字段（完全替换）",
+        "operationId": "put_old_service_shop_api_v2_low_admin_api_old_service_shop__shop_id__put",
+        "parameters": [
+          {
+            "name": "shop_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Shop Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OldServiceShop-Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Old Service Shop By Shop Id",
+        "operationId": "get_old_service_shop_by_shop_id_api_v2_low_admin_api_old_service_shop__shop_id__get",
+        "parameters": [
+          {
+            "name": "shop_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Shop Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOldServiceShopResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/low_admin_api/old_service_shop/": {
+      "get": {
+        "summary": "Get Old Service Shop",
+        "operationId": "get_old_service_shop_api_v2_low_admin_api_old_service_shop__get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "from_iso",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From Iso"
+            }
+          },
+          {
+            "name": "to_iso",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To Iso"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "default": 3000,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOldServiceShopListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/captcha-key": {
       "get": {
         "summary": "Get Captcha Key",
@@ -9599,6 +9789,60 @@
         ],
         "title": "GetOldServiceResultModel"
       },
+      "GetOldServiceShopListResponse": {
+        "properties": {
+          "is_success": {
+            "type": "boolean",
+            "title": "Is Success",
+            "default": true
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "获取结果",
+            "default": "获取成功"
+          },
+          "result_list": {
+            "items": {
+              "$ref": "#/components/schemas/OldServiceShop-Output"
+            },
+            "type": "array",
+            "title": "Result List",
+            "description": "管理员用户信息",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "GetOldServiceShopListResponse"
+      },
+      "GetOldServiceShopResponse": {
+        "properties": {
+          "is_success": {
+            "type": "boolean",
+            "title": "Is Success",
+            "default": true
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "获取结果",
+            "default": "获取成功"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OldServiceShop-Output"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "管理员用户信息"
+          }
+        },
+        "type": "object",
+        "title": "GetOldServiceShopResponse"
+      },
       "GetSearchUserResult": {
         "properties": {
           "is_success": {
@@ -9640,7 +9884,7 @@
           },
           "result_list": {
             "items": {
-              "$ref": "#/components/schemas/OldServiceShop"
+              "$ref": "#/components/schemas/OldServiceShop-Output"
             },
             "type": "array",
             "title": "Result List",
@@ -10136,7 +10380,168 @@
         ],
         "title": "OldServiceInfo"
       },
-      "OldServiceShop": {
+      "OldServiceShop-Input": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "shop_name": {
+            "type": "string",
+            "title": "Shop Name"
+          },
+          "shop_group_id": {
+            "type": "integer",
+            "title": "Shop Group Id",
+            "default": 0
+          },
+          "shop_type": {
+            "$ref": "#/components/schemas/ShopTypeEnum",
+            "default": "main_package"
+          },
+          "money_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Money Amount"
+          },
+          "ss_bandwidth_total_size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ss Bandwidth Total Size",
+            "description": "流量（字节）"
+          },
+          "user_level": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Level",
+            "description": "等级"
+          },
+          "user_level_duration": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "duration"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Level Duration",
+            "description": "等级有效期天数"
+          },
+          "account_validity_duration": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "duration"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Validity Duration",
+            "description": "账户有效期天数"
+          },
+          "ss_bandwidth_reset_interval": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "duration"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ss Bandwidth Reset Interval",
+            "description": "每多少天重置流量 其中流量重置信息为上面几个等级"
+          },
+          "node_speed_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Node Speed Limit",
+            "description": "端口限速"
+          },
+          "node_connector": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Node Connector",
+            "description": "IP限制"
+          },
+          "content_extra": {
+            "type": "string",
+            "title": "Content Extra",
+            "description": "服务支持"
+          },
+          "is_auto_reset_bandwidth": {
+            "type": "boolean",
+            "title": "Is Auto Reset Bandwidth",
+            "default": false
+          },
+          "is_enable": {
+            "type": "boolean",
+            "title": "Is Enable",
+            "default": true
+          },
+          "is_cannot_new_purchase": {
+            "type": "boolean",
+            "title": "Is Cannot New Purchase",
+            "default": false
+          },
+          "data_json": {
+            "type": "object",
+            "title": "Data Json"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "shop_name",
+          "money_amount",
+          "content_extra"
+        ],
+        "title": "OldServiceShop"
+      },
+      "OldServiceShop-Output": {
         "properties": {
           "id": {
             "type": "integer",
@@ -12495,7 +12900,7 @@
           "result": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/OldServiceShop"
+                "$ref": "#/components/schemas/OldServiceShop-Output"
               },
               {
                 "type": "null"

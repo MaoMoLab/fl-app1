@@ -5092,6 +5092,109 @@ class _FallbackClient implements FallbackClient {
   }
 
   @override
+  Future<ErrorResponse>
+  putOldServiceShopApiV2LowAdminApiOldServiceShopShopIdPut({
+    required int shopId,
+    required OldServiceShopInput body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<ErrorResponse>(
+      Options(method: 'PUT', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/old_service_shop/${shopId}',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late ErrorResponse _value;
+    try {
+      _value = ErrorResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetOldServiceShopResponse>
+  getOldServiceShopByShopIdApiV2LowAdminApiOldServiceShopShopIdGet({
+    required int shopId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetOldServiceShopResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/old_service_shop/${shopId}',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late GetOldServiceShopResponse _value;
+    try {
+      _value = GetOldServiceShopResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetOldServiceShopListResponse>
+  getOldServiceShopApiV2LowAdminApiOldServiceShopGet({
+    int? offset = 0,
+    int? limit = 3000,
+    String? q,
+    DateTime? fromIso,
+    DateTime? toIso,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'offset': offset,
+      r'limit': limit,
+      r'q': q,
+      r'from_iso': fromIso?.toIso8601String(),
+      r'to_iso': toIso?.toIso8601String(),
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetOldServiceShopListResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/old_service_shop/',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late GetOldServiceShopListResponse _value;
+    try {
+      _value = GetOldServiceShopListResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<CaptchaKeyModel> getCaptchaKeyApiV2CaptchaKeyGet({
     required CaptchaKeyTypeEnum captchaKeyType,
   }) async {

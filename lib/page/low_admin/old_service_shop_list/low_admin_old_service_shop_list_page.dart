@@ -499,6 +499,34 @@ class _ShopDetailDialogState extends State<_ShopDetailDialog> {
     _isCannotNewPurchase = widget.shop.isCannotNewPurchase;
   }
 
+  void _resetControllers() {
+    // 重置控制器的值为原始数据，而不是重新初始化
+    _shopNameController.text = widget.shop.shopName;
+    _moneyAmountController.text = widget.shop.moneyAmount;
+    _contentExtraController.text = widget.shop.contentExtra;
+    _shopGroupIdController.text = widget.shop.shopGroupId.toString();
+    _ssBandwidthTotalSizeController.text =
+        widget.shop.ssBandwidthTotalSize?.toString() ?? '';
+    _userLevelController.text = widget.shop.userLevel?.toString() ?? '';
+    _userLevelDurationController.text =
+        widget.shop.userLevelDuration ?? '';
+    _accountValidityDurationController.text =
+        widget.shop.accountValidityDuration ?? '';
+    _ssBandwidthResetIntervalController.text =
+        widget.shop.ssBandwidthResetInterval ?? '';
+    _nodeSpeedLimitController.text =
+        widget.shop.nodeSpeedLimit?.toString() ?? '';
+    _nodeConnectorController.text =
+        widget.shop.nodeConnector?.toString() ?? '';
+
+    setState(() {
+      _shopType = widget.shop.shopType;
+      _isAutoResetBandwidth = widget.shop.isAutoResetBandwidth;
+      _isEnable = widget.shop.isEnable;
+      _isCannotNewPurchase = widget.shop.isCannotNewPurchase;
+    });
+  }
+
   @override
   void dispose() {
     _shopNameController.dispose();
@@ -604,9 +632,9 @@ class _ShopDetailDialogState extends State<_ShopDetailDialog> {
                     onPressed: _isSaving
                         ? null
                         : () {
+                      _resetControllers();
                             setState(() {
                               _isEditing = false;
-                              _initializeControllers();
                             });
                           },
                     child: const Text('取消'),

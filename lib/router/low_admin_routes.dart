@@ -1,5 +1,6 @@
 import 'package:fl_app1/page/low_admin/home/low_admin_home_page.dart';
 import 'package:fl_app1/page/low_admin/low_admin_layout.dart';
+import 'package:fl_app1/page/low_admin/old_service_shop_list/low_admin_old_service_shop_list_page.dart';
 import 'package:fl_app1/page/low_admin/user_bought_list/low_admin_user_bought_list_page.dart';
 import 'package:fl_app1/page/low_admin/user_detail/low_admin_user_detail_page.dart';
 import 'package:fl_app1/page/low_admin/user_pay_list/low_admin_user_pay_list_page.dart';
@@ -43,6 +44,11 @@ final RouteBase lowAdminShellRoute = ShellRoute(
       builder: (context, state) => const LowAdminUserPayListPage(),
     ),
     GoRoute(
+      path: '/low_admin/old_service_shop',
+      name: 'low_admin_old_service_shop',
+      builder: (context, state) => const LowAdminOldServiceShopListPage(),
+    ),
+    GoRoute(
       path: '/low_admin/settings',
       name: 'low_admin_settings',
       builder: (context, state) {
@@ -75,7 +81,8 @@ int _selectedIndexForLocation(String location) {
   if (location.startsWith('/low_admin/user_v2')) return 1;
   if (location.startsWith('/low_admin/user_bought')) return 2;
   if (location.startsWith('/low_admin/user_pay_list')) return 3;
-  if (location.startsWith('/low_admin/settings')) return 4;
+  if (location.startsWith('/low_admin/old_service_shop')) return 4;
+  if (location.startsWith('/low_admin/settings')) return 5;
   // exact /low_admin or others under low_admin default to 0
   return 0;
 }

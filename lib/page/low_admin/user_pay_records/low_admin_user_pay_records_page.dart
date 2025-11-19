@@ -81,7 +81,7 @@ class _LowAdminUserPayRecordsPageState
         .getUserPayListApiV2LowAdminApiUserPayListGet(
           limit: _pageLimit,
           offset: _offset,
-          userId: widget.userId,
+          q: 'user_id:${widget.userId}',
         );
 
     if (!mounted) return;

@@ -1398,7 +1398,9 @@ abstract class FallbackClient {
   getUserPayListApiV2LowAdminApiUserPayListGet({
     @Query('offset') int? offset = 0,
     @Query('limit') int? limit = 3000,
-    @Query('user_id') int? userId,
+    @Query('q') String? q,
+    @Query('from_iso') DateTime? fromIso,
+    @Query('to_iso') DateTime? toIso,
   });
 
   /// Delete User Pay List.

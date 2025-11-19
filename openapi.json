@@ -7980,19 +7980,53 @@
         "operationId": "get_user_pay_list_api_v2_low_admin_api_user_pay_list__get",
         "parameters": [
           {
-            "name": "user_id",
+            "name": "q",
             "in": "query",
             "required": false,
             "schema": {
               "anyOf": [
                 {
-                  "type": "integer"
+                  "type": "string"
                 },
                 {
                   "type": "null"
                 }
               ],
-              "title": "User Id"
+              "title": "Q"
+            }
+          },
+          {
+            "name": "from_iso",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From Iso"
+            }
+          },
+          {
+            "name": "to_iso",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To Iso"
             }
           },
           {
@@ -8001,6 +8035,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "minimum": 0,
               "default": 0,
               "title": "Offset"
             }
@@ -8011,6 +8046,8 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
               "default": 3000,
               "title": "Limit"
             }

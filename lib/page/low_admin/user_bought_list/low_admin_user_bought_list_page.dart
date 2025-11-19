@@ -12,7 +12,7 @@ class LowAdminUserBoughtListPage extends StatefulWidget {
 
 class _LowAdminUserBoughtListPageState
     extends State<LowAdminUserBoughtListPage> {
-  final TextEditingController _userIdController = TextEditingController();
+  final TextEditingController _queryController = TextEditingController();
   String? _queryString;
 
   @override
@@ -28,11 +28,7 @@ class _LowAdminUserBoughtListPageState
     final uri = GoRouterState.of(context).uri;
     final qParam = uri.queryParameters['q'];
     if (qParam != null && qParam.isNotEmpty) {
-      // 解析 user_id:xxx 格式
-      if (qParam.startsWith('user_id:')) {
-        final userId = qParam.substring('user_id:'.length);
-        _userIdController.text = userId;
-      }
+      _queryController.text = qParam;
       setState(() {
         _queryString = qParam;
       });
@@ -41,30 +37,14 @@ class _LowAdminUserBoughtListPageState
 
   @override
   void dispose() {
-    _userIdController.dispose();
+    _queryController.dispose();
     super.dispose();
   }
 
-  void _searchByUserId() {
-    final text = _userIdController.text.trim();
+  void _applyQuery() {
+    final text = _queryController.text.trim();
     setState(() {
-      if (text.isEmpty) {
-        _queryString = null;
-      } else {
-        final userId = int.tryParse(text);
-        if (userId != null) {
-          _queryString = 'user_id:$userId';
-        } else {
-          _queryString = null;
-        }
-      }
-    });
-  }
-
-  void _clearFilter() {
-    _userIdController.clear();
-    setState(() {
-      _queryString = null;
+      _queryString = text.isEmpty ? null : text;
     });
   }
 
@@ -78,24 +58,24 @@ class _LowAdminUserBoughtListPageState
             children: [
               Expanded(
                 child: TextField(
-                  controller: _userIdController,
+                  controller: _queryController,
                   decoration: InputDecoration(
-                    labelText: '用户ID',
-                    hintText: '输入用户ID搜索，留空查询所有记录',
-                    prefixIcon: const Icon(Icons.person_search),
-                    suffixIcon: _userIdController.text.isNotEmpty
+                    labelText: '查询参数 (q)',
+                    hintText: '例如: user_id:123 或留空查询所有',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _queryController.text.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear),
                             onPressed: () {
-                              _userIdController.clear();
-                              setState(() {});
+                              _queryController.clear();
+                              _applyQuery();
                             },
                           )
                         : null,
                     border: const OutlineInputBorder(),
+                    helperText: '支持格式: user_id:123 id: shop_id:',
                   ),
-                  keyboardType: TextInputType.number,
-                  onSubmitted: (_) => _searchByUserId(),
+                  onSubmitted: (_) => _applyQuery(),
                   onChanged: (value) {
                     setState(() {});
                   },
@@ -103,15 +83,17 @@ class _LowAdminUserBoughtListPageState
               ),
               const SizedBox(width: 8),
               ElevatedButton.icon(
-                onPressed: _searchByUserId,
-                icon: const Icon(Icons.search),
-                label: const Text('搜索'),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton.icon(
-                onPressed: _clearFilter,
-                icon: const Icon(Icons.refresh),
-                label: const Text('全部'),
+                onPressed: _applyQuery,
+                icon: Icon(_queryController.text
+                    .trim()
+                    .isEmpty
+                    ? Icons.refresh
+                    : Icons.search),
+                label: Text(_queryController.text
+                    .trim()
+                    .isEmpty
+                    ? '全部'
+                    : '搜索'),
               ),
             ],
           ),

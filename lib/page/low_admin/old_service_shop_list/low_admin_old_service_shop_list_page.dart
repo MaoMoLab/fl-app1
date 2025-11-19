@@ -107,46 +107,50 @@ class _LowAdminOldServiceShopListPageState
       children: [
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              labelText: '搜索商品',
-              hintText: '输入商品名称或ID',
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (_searchController.text.isNotEmpty)
-                    IconButton(
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    labelText: '查询参数 (q)',
+                    hintText: '例如: 商品名称 或留空查询所有',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         _searchController.clear();
-                        setState(() {});
+                        _loadShops();
                       },
-                    ),
-                ],
+                    )
+                        : null,
+                    border: const OutlineInputBorder(),
+                    helperText: '支持搜索商品名称或ID',
+                  ),
+                  onSubmitted: (_) => _loadShops(),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                ),
               ),
-              border: const OutlineInputBorder(),
-            ),
-            onSubmitted: (_) => _loadShops(),
-            onChanged: (value) {
-              setState(() {});
-            },
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                onPressed: _isLoading ? null : _loadShops,
+                icon: Icon(_searchController.text
+                    .trim()
+                    .isEmpty
+                    ? Icons.refresh
+                    : Icons.search),
+                label: Text(_searchController.text
+                    .trim()
+                    .isEmpty
+                    ? '全部'
+                    : '搜索'),
+              ),
+            ],
           ),
         ),
-        if (_searchController.text.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _isLoading ? null : _loadShops,
-                icon: const Icon(Icons.search),
-                label: const Text('搜索'),
-              ),
-            ),
-          ),
-        const SizedBox(height: 16),
         Expanded(child: _buildContent()),
       ],
     );
@@ -203,19 +207,28 @@ class _LowAdminOldServiceShopListPageState
               '暂无商品数据',
               style: TextStyle(fontSize: 18, color: Colors.grey[600]),
             ),
+            const SizedBox(height: 8),
+            Text(
+              '输入查询参数搜索，支持搜索商品名称或ID',
+              style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       );
     }
 
-    return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16.0),
-      itemCount: _shops.length,
-      itemBuilder: (context, index) {
-        final shop = _shops[index];
-        return _buildShopCard(shop);
-      },
+    return RefreshIndicator(
+      onRefresh: _loadShops,
+      child: ListView.builder(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(16.0),
+        itemCount: _shops.length,
+        itemBuilder: (context, index) {
+          final shop = _shops[index];
+          return _buildShopCard(shop);
+        },
+      ),
     );
   }
 

@@ -35,7 +35,26 @@ class _LowAdminUserPayListPageState extends State<LowAdminUserPayListPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _fetchRecords();
+    // 延迟读取URL参数，确保GoRouter已经初始化
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadQueryFromUrl();
+    });
+  }
+
+  void _loadQueryFromUrl() {
+    final uri = GoRouterState
+        .of(context)
+        .uri;
+    final qParam = uri.queryParameters['q'];
+    if (qParam != null && qParam.isNotEmpty) {
+      _queryController.text = qParam;
+      setState(() {
+        _queryString = qParam;
+      });
+      _fetchRecords();
+    } else {
+      _fetchRecords();
+    }
   }
 
   @override

@@ -41,6 +41,11 @@ class _LowAdminLayoutState extends State<LowAdminLayout> {
       route: '/low_admin/old_service_shop',
     ),
     NavigationItem(
+      icon: Icons.support_agent,
+      label: '工单管理',
+      route: '/low_admin/ticket',
+    ),
+    NavigationItem(
       icon: Icons.settings,
       label: '设置',
       route: '/low_admin/settings',

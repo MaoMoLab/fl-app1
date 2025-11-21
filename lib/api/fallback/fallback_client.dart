@@ -14,13 +14,12 @@ import '../models/announcement_response.dart';
 import '../models/announcement_update_response.dart';
 import '../models/announcements_get_result_model.dart';
 import '../models/auth_register_response.dart';
-import '../models/body_delete_bought_v_user_bought_delete.dart';
 import '../models/captcha_key_model.dart';
 import '../models/captcha_key_type_enum.dart';
 import '../models/check_invite_code_params_model.dart';
 import '../models/crisp_data_result_model.dart';
 import '../models/error_response.dart';
-import '../models/formal_enum.dart';
+import '../models/fastapi_compat_v_body_delete_bought_v_user_bought_delete.dart';
 import '../models/get_csrf_token_result.dart';
 import '../models/get_dashboard_result_model.dart';
 import '../models/get_me_get_result_model.dart';
@@ -29,6 +28,8 @@ import '../models/get_old_service_shop_list_response.dart';
 import '../models/get_old_service_shop_response.dart';
 import '../models/get_search_user_result.dart';
 import '../models/get_service_old_shop_result.dart';
+import '../models/get_ticket_detail_response.dart';
+import '../models/get_ticket_list_response.dart';
 import '../models/get_user_money_response.dart';
 import '../models/get_version_model.dart';
 import '../models/get_view_user_bought_result.dart';
@@ -46,6 +47,7 @@ import '../models/post_traffic_model.dart';
 import '../models/purchase_records_result.dart';
 import '../models/refresh_post_result_model.dart';
 import '../models/replace_email_response.dart';
+import '../models/reply_params.dart';
 import '../models/request_email_code_params_model.dart';
 import '../models/ss_node.dart';
 import '../models/sub_link_client_type_enum.dart';
@@ -117,6 +119,7 @@ import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_pay_list_put_
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_v_get_user_old_service_response.dart';
 import '../models/web_sub_fastapi_routers_v_casino_function_sql_table_enum.dart';
 import '../models/web_sub_fastapi_routers_v_emby_function_sql_table_enum.dart';
+import '../models/web_sub_fastapi_routers_v_user_shop_index_formal_enum.dart';
 
 part 'fallback_client.g.dart';
 
@@ -135,10 +138,6 @@ abstract class FallbackClient {
   /// Get Version
   @GET('/v1/version')
   Future<VersionResponseModel> getVersionV1VersionGet();
-
-  /// Get Db Version
-  @GET('/v1/version_db')
-  Future<void> getDbVersionV1VersionDbGet();
 
   /// Emby Function.
   ///
@@ -160,7 +159,7 @@ abstract class FallbackClient {
     @Query('api_key') required String apiKey,
     @Query('sql_table')
     required WebSubFastapiRoutersVCasinoFunctionSqlTableEnum sqlTable,
-    @Query('sql_table_telegram_id') String? sqlTableTelegramId,
+    @Query('sql_table_telegram_id') int? sqlTableTelegramId,
     @Query('sql_table_add_transfer_enable') int? sqlTableAddTransferEnable,
     @Query('type_mode') TypeModeEnum? typeMode,
   });
@@ -521,14 +520,6 @@ abstract class FallbackClient {
     @Query('ip_cidr') required String ipCidr,
   });
 
-  /// Post Move User Bought V1
-  @POST('/v1/admin/move_user_bought_v1')
-  Future<void> postMoveUserBoughtV1V1AdminMoveUserBoughtV1Post();
-
-  /// Post Move Old User V1
-  @POST('/v1/admin/move_old_user_v1')
-  Future<void> postMoveOldUserV1V1AdminMoveOldUserV1Post();
-
   /// Post Gaset
   @POST('/v1/user/gaset')
   Future<void> postGasetV1UserGasetPost();
@@ -565,7 +556,7 @@ abstract class FallbackClient {
   Future<void> getShopV1UserShopGet({
     @Query('page') int? page = 1,
     @Query('size') int? size = 15,
-    @Query('format') FormalEnum? format,
+    @Query('format') WebSubFastapiRoutersVUserShopIndexFormalEnum? format,
   });
 
   /// Get Detect
@@ -581,7 +572,7 @@ abstract class FallbackClient {
   Future<void> ticketV1UserTicketGet({
     @Query('page') int? page = 1,
     @Query('size') int? size = 15,
-    @Query('format') FormalEnum? format,
+    @Query('format') WebSubFastapiRoutersVUserShopIndexFormalEnum? format,
   });
 
   /// Post Ticket.
@@ -606,7 +597,7 @@ abstract class FallbackClient {
     @Path('ticket_id') required int ticketId,
     @Query('page') int? page = 1,
     @Query('size') int? size = 5,
-    @Query('format') FormalEnum? format,
+    @Query('format') WebSubFastapiRoutersVUserShopIndexFormalEnum? format,
   });
 
   /// Post Buy Pre.
@@ -640,7 +631,9 @@ abstract class FallbackClient {
   /// Bought
   @GET('/v1/user/bought')
   Future<void> boughtV1UserBoughtGet({
-    @Query('format') FormalEnum? format = FormalEnum.valueJson,
+    @Query('format')
+    WebSubFastapiRoutersVUserShopIndexFormalEnum? format =
+        WebSubFastapiRoutersVUserShopIndexFormalEnum.valueJson,
     @Query('page') int? page = 1,
     @Query('size') int? size = 15,
   });
@@ -649,7 +642,7 @@ abstract class FallbackClient {
   @FormUrlEncoded()
   @DELETE('/v1/user/bought')
   Future<void> deleteBoughtV1UserBoughtDelete({
-    @Body() required BodyDeleteBoughtVUserBoughtDelete body,
+    @Body() required FastapiCompatVBodyDeleteBoughtVUserBoughtDelete body,
   });
 
   /// Checkin
@@ -1458,6 +1451,37 @@ abstract class FallbackClient {
     @Query('q') String? q,
     @Query('from_iso') DateTime? fromIso,
     @Query('to_iso') DateTime? toIso,
+  });
+
+  /// Get Ticket.
+  ///
+  /// 管理端：工单列表（支持 GrafanaParamsModel 的通用筛选）.
+  /// 搜索支持 q 中的命令参数：id:, user_id:, status: 以及模糊搜索.
+  /// 返回 DB2M.T2.UserTicketView 列表（已封装为 Pydantic model）.
+  @GET('/api/v2/low_admin_api/ticket/')
+  Future<GetTicketListResponse> getTicketApiV2LowAdminApiTicketGet({
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
+    @Query('q') String? q,
+    @Query('from_iso') DateTime? fromIso,
+    @Query('to_iso') DateTime? toIso,
+  });
+
+  /// Get Ticket Detail
+  @GET('/api/v2/low_admin_api/ticket/{ticket_id}')
+  Future<GetTicketDetailResponse>
+  getTicketDetailApiV2LowAdminApiTicketTicketIdGet({
+    @Path('ticket_id') required int ticketId,
+  });
+
+  /// Post Ticket Reply.
+  ///
+  /// 管理端回复工单：插入一条 UserTicketMessage，并可选择更新工单状态.
+  /// 注意：此接口未进行管理员鉴权，调用方需保证权限（低权限 API 目录约定）.
+  @POST('/api/v2/low_admin_api/ticket/{ticket_id}/reply')
+  Future<ErrorResponse> postTicketReplyApiV2LowAdminApiTicketTicketIdReplyPost({
+    @Path('ticket_id') required int ticketId,
+    @Body() required ReplyParams body,
   });
 
   /// Get Captcha Key.

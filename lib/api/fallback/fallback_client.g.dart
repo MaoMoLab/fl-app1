@@ -85,25 +85,6 @@ class _FallbackClient implements FallbackClient {
   }
 
   @override
-  Future<void> getDbVersionV1VersionDbGet() async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-        _dio.options,
-        '/v1/version_db',
-        queryParameters: queryParameters,
-        data: _data,
-      )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    await _dio.fetch<void>(_options);
-  }
-
-  @override
   Future<void> embyFunctionV1EmbyFunctionGet({
     required String apiKey,
     required WebSubFastapiRoutersVEmbyFunctionSqlTableEnum sqlTable,
@@ -137,7 +118,7 @@ class _FallbackClient implements FallbackClient {
   Future<void> casinoFunctionV1CasinoFunctionGet({
     required String apiKey,
     required WebSubFastapiRoutersVCasinoFunctionSqlTableEnum sqlTable,
-    String? sqlTableTelegramId,
+    int? sqlTableTelegramId,
     int? sqlTableAddTransferEnable,
     TypeModeEnum? typeMode,
   }) async {
@@ -1509,44 +1490,6 @@ class _FallbackClient implements FallbackClient {
   }
 
   @override
-  Future<void> postMoveUserBoughtV1V1AdminMoveUserBoughtV1Post() async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-        _dio.options,
-        '/v1/admin/move_user_bought_v1',
-        queryParameters: queryParameters,
-        data: _data,
-      )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    await _dio.fetch<void>(_options);
-  }
-
-  @override
-  Future<void> postMoveOldUserV1V1AdminMoveOldUserV1Post() async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-        _dio.options,
-        '/v1/admin/move_old_user_v1',
-        queryParameters: queryParameters,
-        data: _data,
-      )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    await _dio.fetch<void>(_options);
-  }
-
-  @override
   Future<void> postGasetV1UserGasetPost() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -1652,7 +1595,7 @@ class _FallbackClient implements FallbackClient {
   Future<void> getShopV1UserShopGet({
     int? page = 1,
     int? size = 15,
-    FormalEnum? format,
+    WebSubFastapiRoutersVUserShopIndexFormalEnum? format,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -1718,7 +1661,7 @@ class _FallbackClient implements FallbackClient {
   Future<void> ticketV1UserTicketGet({
     int? page = 1,
     int? size = 15,
-    FormalEnum? format,
+    WebSubFastapiRoutersVUserShopIndexFormalEnum? format,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -1807,7 +1750,7 @@ class _FallbackClient implements FallbackClient {
     required int ticketId,
     int? page = 1,
     int? size = 5,
-    FormalEnum? format,
+    WebSubFastapiRoutersVUserShopIndexFormalEnum? format,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -1951,7 +1894,8 @@ class _FallbackClient implements FallbackClient {
 
   @override
   Future<void> boughtV1UserBoughtGet({
-    FormalEnum? format = FormalEnum.valueJson,
+    WebSubFastapiRoutersVUserShopIndexFormalEnum? format =
+        WebSubFastapiRoutersVUserShopIndexFormalEnum.valueJson,
     int? page = 1,
     int? size = 15,
   }) async {
@@ -1979,7 +1923,7 @@ class _FallbackClient implements FallbackClient {
 
   @override
   Future<void> deleteBoughtV1UserBoughtDelete({
-    required BodyDeleteBoughtVUserBoughtDelete body,
+    required FastapiCompatVBodyDeleteBoughtVUserBoughtDelete body,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -5195,6 +5139,107 @@ class _FallbackClient implements FallbackClient {
     late GetOldServiceShopListResponse _value;
     try {
       _value = GetOldServiceShopListResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetTicketListResponse> getTicketApiV2LowAdminApiTicketGet({
+    int? offset = 0,
+    int? limit = 3000,
+    String? q,
+    DateTime? fromIso,
+    DateTime? toIso,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'offset': offset,
+      r'limit': limit,
+      r'q': q,
+      r'from_iso': fromIso?.toIso8601String(),
+      r'to_iso': toIso?.toIso8601String(),
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetTicketListResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/ticket/',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late GetTicketListResponse _value;
+    try {
+      _value = GetTicketListResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetTicketDetailResponse>
+  getTicketDetailApiV2LowAdminApiTicketTicketIdGet({
+    required int ticketId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetTicketDetailResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/ticket/${ticketId}',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late GetTicketDetailResponse _value;
+    try {
+      _value = GetTicketDetailResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<ErrorResponse> postTicketReplyApiV2LowAdminApiTicketTicketIdReplyPost({
+    required int ticketId,
+    required ReplyParams body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<ErrorResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/ticket/${ticketId}/reply',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late ErrorResponse _value;
+    try {
+      _value = ErrorResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

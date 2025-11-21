@@ -55,22 +55,6 @@
         }
       }
     },
-    "/v1/version_db": {
-      "get": {
-        "summary": "Get Db Version",
-        "operationId": "get_db_version_v1_version_db_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/emby_function": {
       "get": {
         "summary": "Emby Function",
@@ -181,7 +165,7 @@
             "schema": {
               "anyOf": [
                 {
-                  "type": "string"
+                  "type": "integer"
                 },
                 {
                   "type": "null"
@@ -2379,38 +2363,6 @@
         }
       }
     },
-    "/v1/admin/move_user_bought_v1": {
-      "post": {
-        "summary": "Post Move User Bought V1",
-        "operationId": "post_move_user_bought_v1_v1_admin_move_user_bought_v1_post",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/admin/move_old_user_v1": {
-      "post": {
-        "summary": "Post Move Old User V1",
-        "operationId": "post_move_old_user_v1_v1_admin_move_old_user_v1_post",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/user/gaset": {
       "post": {
         "summary": "Post Gaset",
@@ -2578,7 +2530,7 @@
             "schema": {
               "anyOf": [
                 {
-                  "$ref": "#/components/schemas/FormalEnum"
+                  "$ref": "#/components/schemas/web_sub3_fastapi__routers__v1__user__shop__index__FormalEnum"
                 },
                 {
                   "type": "null"
@@ -2674,7 +2626,7 @@
             "schema": {
               "anyOf": [
                 {
-                  "$ref": "#/components/schemas/FormalEnum"
+                  "$ref": "#/components/schemas/web_sub3_fastapi__routers__v1__user__shop__index__FormalEnum"
                 },
                 {
                   "type": "null"
@@ -2822,7 +2774,7 @@
             "schema": {
               "anyOf": [
                 {
-                  "$ref": "#/components/schemas/FormalEnum"
+                  "$ref": "#/components/schemas/web_sub3_fastapi__routers__v1__user__shop__index__FormalEnum"
                 },
                 {
                   "type": "null"
@@ -2885,6 +2837,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "additionalProperties": true,
                   "type": "object",
                   "title": "Response Post Buy Pre V1 User Buy Pre Post"
                 }
@@ -2905,6 +2858,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "additionalProperties": true,
                   "type": "object",
                   "title": "Response Post Buy Pre V1 User Buy Post"
                 }
@@ -2988,7 +2942,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/FormalEnum",
+              "$ref": "#/components/schemas/web_sub3_fastapi__routers__v1__user__shop__index__FormalEnum",
               "default": "json"
             }
           },
@@ -3042,7 +2996,7 @@
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/Body_delete_bought_v1_user_bought_delete"
+                "$ref": "#/components/schemas/fastapi___compat__v2__Body_delete_bought_v1_user_bought_delete"
               }
             }
           }
@@ -8397,6 +8351,199 @@
         }
       }
     },
+    "/api/v2/low_admin_api/ticket/": {
+      "get": {
+        "summary": "Get Ticket",
+        "description": "管理端：工单列表（支持 GrafanaParamsModel 的通用筛选）\n搜索支持 q 中的命令参数：id:, user_id:, status: 以及模糊搜索\n返回 DB2M.T2.UserTicketView 列表（已封装为 Pydantic model）",
+        "operationId": "get_ticket_api_v2_low_admin_api_ticket__get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "from_iso",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From Iso"
+            }
+          },
+          {
+            "name": "to_iso",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To Iso"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "default": 3000,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTicketListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/low_admin_api/ticket/{ticket_id}": {
+      "get": {
+        "summary": "Get Ticket Detail",
+        "operationId": "get_ticket_detail_api_v2_low_admin_api_ticket__ticket_id__get",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Ticket Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTicketDetailResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/low_admin_api/ticket/{ticket_id}/reply": {
+      "post": {
+        "summary": "Post Ticket Reply",
+        "description": "管理端回复工单：插入一条 UserTicketMessage，并可选择更新工单状态\n注意：此接口未进行管理员鉴权，调用方需保证权限（低权限 API 目录约定）",
+        "operationId": "post_ticket_reply_api_v2_low_admin_api_ticket__ticket_id__reply_post",
+        "parameters": [
+          {
+            "name": "ticket_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Ticket Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyParams"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/captcha-key": {
       "get": {
         "summary": "Get Captcha Key",
@@ -9399,19 +9546,6 @@
         ],
         "title": "AuthRegisterResponse"
       },
-      "Body_delete_bought_v1_user_bought_delete": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id"
-        ],
-        "title": "Body_delete_bought_v1_user_bought_delete"
-      },
       "CaptchaKeyModel": {
         "properties": {
           "is_success": {
@@ -9764,14 +9898,6 @@
         "type": "object",
         "title": "ErrorResponse"
       },
-      "FormalEnum": {
-        "type": "string",
-        "enum": [
-          "json"
-        ],
-        "const": "json",
-        "title": "FormalEnum"
-      },
       "GetCsrfTokenResult": {
         "properties": {
           "is_success": {
@@ -9968,6 +10094,60 @@
         },
         "type": "object",
         "title": "GetServiceOldShopResult"
+      },
+      "GetTicketDetailResponse": {
+        "properties": {
+          "is_success": {
+            "type": "boolean",
+            "title": "Is Success",
+            "default": true
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "获取结果",
+            "default": "获取成功"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserTicketView"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "工单详情"
+          }
+        },
+        "type": "object",
+        "title": "GetTicketDetailResponse"
+      },
+      "GetTicketListResponse": {
+        "properties": {
+          "is_success": {
+            "type": "boolean",
+            "title": "Is Success",
+            "default": true
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "获取结果",
+            "default": "获取成功"
+          },
+          "result_list": {
+            "items": {
+              "$ref": "#/components/schemas/UserTicketView"
+            },
+            "type": "array",
+            "title": "Result List",
+            "description": "工单视图列表",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "GetTicketListResponse"
       },
       "GetUserMoneyResponse": {
         "properties": {
@@ -10199,6 +10379,46 @@
           "v2"
         ],
         "title": "LoginWebVersionEnum"
+      },
+      "Messages": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "ticket_id": {
+            "type": "integer",
+            "title": "Ticket Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "ticket_id",
+          "user_id",
+          "content"
+        ],
+        "title": "Messages"
       },
       "NodeConfig": {
         "properties": {
@@ -10602,6 +10822,7 @@
             "default": false
           },
           "data_json": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Data Json"
           }
@@ -10756,6 +10977,7 @@
             "default": false
           },
           "data_json": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Data Json"
           }
@@ -11017,6 +11239,7 @@
             "description": "备注"
           },
           "config_json": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Config Json",
             "description": "配置JSON"
@@ -11084,6 +11307,31 @@
           "result"
         ],
         "title": "ReplaceEmailResponse"
+      },
+      "ReplyParams": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "回复内容"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TicketStatusEnum"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "可选，变更工单状态"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "title": "ReplyParams"
       },
       "RequestEmailCodeParamsModel": {
         "properties": {
@@ -11736,6 +11984,16 @@
         ],
         "title": "TicketStatus"
       },
+      "TicketStatusEnum": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "processing",
+          "resolved",
+          "closed"
+        ],
+        "title": "TicketStatusEnum"
+      },
       "TicketV2GetResultModel": {
         "properties": {
           "is_success": {
@@ -12002,6 +12260,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "Telegram 链接信息"
@@ -12148,6 +12407,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "安全设置信息"
@@ -12319,6 +12579,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "邀请记录"
@@ -12436,6 +12697,7 @@
             "default": 1
           },
           "config_json": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Config Json"
           },
@@ -12484,6 +12746,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "审计记录信息"
@@ -12509,6 +12772,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "审计规则信息"
@@ -12553,6 +12817,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "链接令牌信息"
@@ -12578,6 +12843,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "节点详情"
@@ -12627,6 +12893,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "账单信息"
@@ -12652,6 +12919,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "自动续费设置信息"
@@ -12677,6 +12945,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "服务账单信息"
@@ -12702,6 +12971,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "签到信息"
@@ -12813,6 +13083,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "SS密码信息"
@@ -12946,6 +13217,7 @@
             "description": "确认订单结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "订单信息"
@@ -12999,6 +13271,7 @@
             "description": "预订结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "预订信息"
@@ -13010,6 +13283,64 @@
           "result"
         ],
         "title": "UserShopOldShopIdPreOrderResponse"
+      },
+      "UserTicketView": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "ticket_status": {
+            "$ref": "#/components/schemas/TicketStatusEnum"
+          },
+          "is_markdown": {
+            "type": "boolean",
+            "title": "Is Markdown"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/Messages"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "user_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "User Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "user_id",
+          "title",
+          "ticket_status",
+          "is_markdown"
+        ],
+        "title": "UserTicketView"
       },
       "UserTicketsTicketIdEditStatusResponse": {
         "properties": {
@@ -13024,6 +13355,7 @@
             "description": "编辑结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "工单状态信息"
@@ -13049,6 +13381,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "工单消息列表"
@@ -13074,6 +13407,7 @@
             "description": "发送结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "消息信息"
@@ -13267,6 +13601,7 @@
             "description": "激活结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "激活信息"
@@ -13292,6 +13627,7 @@
             "description": "获取结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "激活码信息"
@@ -13317,6 +13653,7 @@
             "description": "充值结果"
           },
           "result": {
+            "additionalProperties": true,
             "type": "object",
             "title": "Result",
             "description": "充值信息"
@@ -13475,6 +13812,19 @@
           "ssr_vmess"
         ],
         "title": "VpnTypeListEnum"
+      },
+      "fastapi___compat__v2__Body_delete_bought_v1_user_bought_delete": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "Body_delete_bought_v1_user_bought_delete"
       },
       "web_sub3_fastapi__routers__api__v2__admin_api__announcement__AnnouncementResponse__Result": {
         "properties": {
@@ -14782,6 +15132,13 @@
           "version"
         ],
         "title": "SqlTableEnum"
+      },
+      "web_sub3_fastapi__routers__v1__user__shop__index__FormalEnum": {
+        "type": "string",
+        "enum": [
+          "json"
+        ],
+        "title": "FormalEnum"
       }
     },
     "securitySchemes": {

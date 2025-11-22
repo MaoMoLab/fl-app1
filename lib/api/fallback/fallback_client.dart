@@ -30,7 +30,10 @@ import '../models/get_search_user_result.dart';
 import '../models/get_service_old_shop_result.dart';
 import '../models/get_ticket_detail_response.dart';
 import '../models/get_ticket_list_response.dart';
+import '../models/get_user_infos_response.dart';
 import '../models/get_user_money_response.dart';
+import '../models/get_usernames_request.dart';
+import '../models/get_usernames_response.dart';
 import '../models/get_version_model.dart';
 import '../models/get_view_user_bought_result.dart';
 import '../models/get_view_user_result.dart';
@@ -1440,6 +1443,30 @@ abstract class FallbackClient {
   Future<GetOldServiceShopResponse>
   getOldServiceShopByShopIdApiV2LowAdminApiOldServiceShopShopIdGet({
     @Path('shop_id') required int shopId,
+  });
+
+  /// Get Batch Usernames.
+  ///
+  /// 批量获取用户名.
+  ///
+  /// 根据提供的用户ID列表，返回对应的用户名。.
+  /// 如果用户不存在或已删除，则返回 [已销号].
+  @POST('/api/v2/low_admin_api/user_v2/batch_usernames')
+  Future<GetUsernamesResponse>
+  getBatchUsernamesApiV2LowAdminApiUserV2BatchUsernamesPost({
+    @Body() required GetUsernamesRequest body,
+  });
+
+  /// Get Batch User Infos.
+  ///
+  /// 批量获取用户信息（用户名和邮箱）.
+  ///
+  /// 根据提供的用户ID列表，返回对应的用户名和邮箱。.
+  /// 如果用户不存在或已删除，则返回用户名为 [已销号]，邮箱为空字符串.
+  @POST('/api/v2/low_admin_api/user_v2/batch_user_infos')
+  Future<GetUserInfosResponse>
+  getBatchUserInfosApiV2LowAdminApiUserV2BatchUserInfosPost({
+    @Body() required GetUsernamesRequest body,
   });
 
   /// Get Old Service Shop

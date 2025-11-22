@@ -8328,6 +8328,94 @@
         }
       }
     },
+    "/api/v2/low_admin_api/user_v2/batch_usernames": {
+      "post": {
+        "summary": "Get Batch Usernames",
+        "description": "批量获取用户名\n\n根据提供的用户ID列表，返回对应的用户名。\n如果用户不存在或已删除，则返回 [已销号]",
+        "operationId": "get_batch_usernames_api_v2_low_admin_api_user_v2_batch_usernames_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetUsernamesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUsernamesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JwtAccessBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v2/low_admin_api/user_v2/batch_user_infos": {
+      "post": {
+        "summary": "Get Batch User Infos",
+        "description": "批量获取用户信息（用户名和邮箱）\n\n根据提供的用户ID列表，返回对应的用户名和邮箱。\n如果用户不存在或已删除，则返回用户名为 [已销号]，邮箱为空字符串",
+        "operationId": "get_batch_user_infos_api_v2_low_admin_api_user_v2_batch_user_infos_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetUsernamesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserInfosResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JwtAccessBearer": []
+          }
+        ]
+      }
+    },
     "/api/v2/low_admin_api/old_service_shop/": {
       "get": {
         "summary": "Get Old Service Shop",
@@ -10249,6 +10337,31 @@
         "type": "object",
         "title": "GetTicketListResponse"
       },
+      "GetUserInfosResponse": {
+        "properties": {
+          "is_success": {
+            "type": "boolean",
+            "title": "Is Success",
+            "default": true
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "获取结果",
+            "default": "获取成功"
+          },
+          "result": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/UserInfo"
+            },
+            "type": "object",
+            "title": "Result",
+            "description": "用户ID到用户信息的映射"
+          }
+        },
+        "type": "object",
+        "title": "GetUserInfosResponse"
+      },
       "GetUserMoneyResponse": {
         "properties": {
           "is_success": {
@@ -10276,6 +10389,48 @@
         },
         "type": "object",
         "title": "GetUserMoneyResponse"
+      },
+      "GetUsernamesRequest": {
+        "properties": {
+          "user_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "User Ids",
+            "description": "用户ID列表"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_ids"
+        ],
+        "title": "GetUsernamesRequest"
+      },
+      "GetUsernamesResponse": {
+        "properties": {
+          "is_success": {
+            "type": "boolean",
+            "title": "Is Success",
+            "default": true
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "获取结果",
+            "default": "获取成功"
+          },
+          "result": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Result",
+            "description": "用户ID到用户名的映射"
+          }
+        },
+        "type": "object",
+        "title": "GetUsernamesResponse"
       },
       "GetVersionModel": {
         "properties": {
@@ -12665,6 +12820,32 @@
         },
         "type": "object",
         "title": "UserGroupHost"
+      },
+      "UserInfo": {
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "title": "User Name",
+            "description": "用户名"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email",
+            "description": "邮箱"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_name"
+        ],
+        "title": "UserInfo"
       },
       "UserInviteRecordResponse": {
         "properties": {

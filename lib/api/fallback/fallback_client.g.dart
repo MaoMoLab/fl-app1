@@ -5106,6 +5106,68 @@ class _FallbackClient implements FallbackClient {
   }
 
   @override
+  Future<GetUsernamesResponse>
+  getBatchUsernamesApiV2LowAdminApiUserV2BatchUsernamesPost({
+    required GetUsernamesRequest body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<GetUsernamesResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/user_v2/batch_usernames',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late GetUsernamesResponse _value;
+    try {
+      _value = GetUsernamesResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetUserInfosResponse>
+  getBatchUserInfosApiV2LowAdminApiUserV2BatchUserInfosPost({
+    required GetUsernamesRequest body,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body.toJson());
+    final _options = _setStreamType<GetUserInfosResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        '/api/v2/low_admin_api/user_v2/batch_user_infos',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, Object?>>(_options);
+    late GetUserInfosResponse _value;
+    try {
+      _value = GetUserInfosResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<GetOldServiceShopListResponse>
   getOldServiceShopApiV2LowAdminApiOldServiceShopGet({
     int? offset = 0,

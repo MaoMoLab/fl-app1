@@ -28,6 +28,8 @@ import '../models/get_old_service_shop_list_response.dart';
 import '../models/get_old_service_shop_response.dart';
 import '../models/get_search_user_result.dart';
 import '../models/get_service_old_shop_result.dart';
+import '../models/get_ss_node_list_response.dart';
+import '../models/get_ss_node_response.dart';
 import '../models/get_ticket_detail_response.dart';
 import '../models/get_ticket_list_response.dart';
 import '../models/get_user_infos_response.dart';
@@ -52,7 +54,8 @@ import '../models/refresh_post_result_model.dart';
 import '../models/replace_email_response.dart';
 import '../models/reply_params.dart';
 import '../models/request_email_code_params_model.dart';
-import '../models/ss_node.dart';
+import '../models/ss_node_input.dart';
+import '../models/ss_node_output.dart';
 import '../models/sub_link_client_type_enum.dart';
 import '../models/subscribe_type_enum.dart';
 import '../models/suffix_type_enum.dart';
@@ -122,7 +125,7 @@ import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_pay_list_put_
 import '../models/web_sub_fastapi_routers_api_v_low_admin_api_user_v_get_user_old_service_response.dart';
 import '../models/web_sub_fastapi_routers_v_casino_function_sql_table_enum.dart';
 import '../models/web_sub_fastapi_routers_v_emby_function_sql_table_enum.dart';
-import '../models/web_sub_fastapi_routers_v_user_ticket_index_formal_enum.dart';
+import '../models/web_sub_fastapi_routers_v_user_ticket_view_formal_enum.dart';
 
 part 'fallback_client.g.dart';
 
@@ -559,7 +562,7 @@ abstract class FallbackClient {
   Future<void> getShopV1UserShopGet({
     @Query('page') int? page = 1,
     @Query('size') int? size = 15,
-    @Query('format') WebSubFastapiRoutersVUserTicketIndexFormalEnum? format,
+    @Query('format') WebSubFastapiRoutersVUserTicketViewFormalEnum? format,
   });
 
   /// Get Detect
@@ -575,7 +578,7 @@ abstract class FallbackClient {
   Future<void> ticketV1UserTicketGet({
     @Query('page') int? page = 1,
     @Query('size') int? size = 15,
-    @Query('format') WebSubFastapiRoutersVUserTicketIndexFormalEnum? format,
+    @Query('format') WebSubFastapiRoutersVUserTicketViewFormalEnum? format,
   });
 
   /// Post Ticket.
@@ -600,7 +603,7 @@ abstract class FallbackClient {
     @Path('ticket_id') required int ticketId,
     @Query('page') int? page = 1,
     @Query('size') int? size = 5,
-    @Query('format') WebSubFastapiRoutersVUserTicketIndexFormalEnum? format,
+    @Query('format') WebSubFastapiRoutersVUserTicketViewFormalEnum? format,
   });
 
   /// Post Buy Pre.
@@ -635,8 +638,8 @@ abstract class FallbackClient {
   @GET('/v1/user/bought')
   Future<void> boughtV1UserBoughtGet({
     @Query('format')
-    WebSubFastapiRoutersVUserTicketIndexFormalEnum? format =
-        WebSubFastapiRoutersVUserTicketIndexFormalEnum.valueJson,
+    WebSubFastapiRoutersVUserTicketViewFormalEnum? format =
+        WebSubFastapiRoutersVUserTicketViewFormalEnum.valueJson,
     @Query('page') int? page = 1,
     @Query('size') int? size = 15,
   });
@@ -722,7 +725,7 @@ abstract class FallbackClient {
 
   /// Read Nodes
   @GET('/api/v2/admin_api/db/ss_node/')
-  Future<List<SsNode>> readNodesApiV2AdminApiDbSsNodeGet({
+  Future<List<SsNodeOutput>> readNodesApiV2AdminApiDbSsNodeGet({
     @Query('order') required String order,
     @Query('offset') int? offset = 0,
     @Query('limit') int? limit = 10000,
@@ -1443,6 +1446,57 @@ abstract class FallbackClient {
   Future<GetOldServiceShopResponse>
   getOldServiceShopByShopIdApiV2LowAdminApiOldServiceShopShopIdGet({
     @Path('shop_id') required int shopId,
+  });
+
+  /// Put Ss Node.
+  ///
+  /// 更新节点信息 - 需要提供所有必填字段（完全替换）.
+  @PUT('/api/v2/low_admin_api/ss_node/{node_id}')
+  Future<ErrorResponse> putSsNodeApiV2LowAdminApiSsNodeNodeIdPut({
+    @Path('node_id') required int nodeId,
+    @Body() required SsNodeInput body,
+  });
+
+  /// Delete Ss Node.
+  ///
+  /// 删除节点.
+  @DELETE('/api/v2/low_admin_api/ss_node/{node_id}')
+  Future<ErrorResponse> deleteSsNodeApiV2LowAdminApiSsNodeNodeIdDelete({
+    @Path('node_id') required int nodeId,
+  });
+
+  /// Get Ss Node By Id.
+  ///
+  /// 根据ID获取节点信息.
+  @GET('/api/v2/low_admin_api/ss_node/{node_id}')
+  Future<GetSsNodeResponse> getSsNodeByIdApiV2LowAdminApiSsNodeNodeIdGet({
+    @Path('node_id') required int nodeId,
+  });
+
+  /// Post Ss Node.
+  ///
+  /// 创建新节点.
+  @POST('/api/v2/low_admin_api/ss_node/')
+  Future<ErrorResponse> postSsNodeApiV2LowAdminApiSsNodePost({
+    @Body() required SsNodeInput body,
+  });
+
+  /// Get Ss Node List.
+  ///
+  /// 获取节点列表，支持搜索和分页.
+  ///
+  /// 支持的查询参数:.
+  /// - q: 模糊搜索（节点名称、备注、ID）.
+  /// - q_command: 精确查询命令，如 {"id": "123", "node_level": "1", "vpn_type": "vmess"}.
+  /// - limit: 每页数量.
+  /// - offset: 偏移量.
+  @GET('/api/v2/low_admin_api/ss_node/')
+  Future<GetSsNodeListResponse> getSsNodeListApiV2LowAdminApiSsNodeGet({
+    @Query('offset') int? offset = 0,
+    @Query('limit') int? limit = 3000,
+    @Query('q') String? q,
+    @Query('from_iso') DateTime? fromIso,
+    @Query('to_iso') DateTime? toIso,
   });
 
   /// Get Batch Usernames.

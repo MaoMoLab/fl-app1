@@ -23,7 +23,9 @@ class _LowAdminSsNodePageState extends State<LowAdminSsNodePage> {
   bool _isLoading = false;
   String? _errorMessage;
   static const double _tabletBreakpoint = 640;
-  static const double _desktopBreakpoint = 1100;
+  static const double _desktopBreakpoint = 1280;
+  static const double _largeDesktopBreakpoint = 1800;
+  static const double _cardMinWidth = 350;
 
   @override
   void initState() {
@@ -76,10 +78,26 @@ class _LowAdminSsNodePageState extends State<LowAdminSsNodePage> {
     }
   }
 
-  bool _isDesktop(double width) => width >= _desktopBreakpoint;
+  bool _isTablet(double width) => width >= _tabletBreakpoint;
 
-  bool _isTablet(double width) =>
-      width >= _tabletBreakpoint && width < _desktopBreakpoint;
+  int _calculateGridCrossAxisCount(double width) {
+    // 减去内边距和间距的占用空间
+    final double availableWidth = width - 32; // padding: 16 * 2
+
+    // 根据宽度计算可以容纳的列数
+    if (width >= _largeDesktopBreakpoint) {
+      // 超大屏幕: 尝试显示4列
+      final int cols = (availableWidth / _cardMinWidth).floor();
+      return cols >= 4 ? 4 : 3;
+    } else if (width >= _desktopBreakpoint) {
+      // 桌面屏幕: 尝试显示3列
+      final int cols = (availableWidth / _cardMinWidth).floor();
+      return cols >= 3 ? 3 : 2;
+    } else {
+      // 平板: 2列
+      return 2;
+    }
+  }
 
   Future<void> _openNodeForm({SsNodeOutput? node}) async {
     final bool? updated = await showDialog<bool>(
@@ -153,9 +171,9 @@ class _LowAdminSsNodePageState extends State<LowAdminSsNodePage> {
 
   Widget _buildFilterRow() {
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -266,22 +284,16 @@ class _LowAdminSsNodePageState extends State<LowAdminSsNodePage> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final double width = constraints.maxWidth;
-          final bool isDesktop = _isDesktop(width);
           final bool isTablet = _isTablet(width);
 
           Widget child;
-          if (isDesktop) {
-            child = ListView(
-              padding: const EdgeInsets.all(16),
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [_buildDesktopTable()],
-            );
-          } else if (isTablet) {
+          if (isTablet) {
+            final int crossAxisCount = _calculateGridCrossAxisCount(width);
             child = GridView.builder(
               padding: const EdgeInsets.all(16),
               physics: const AlwaysScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
                 childAspectRatio: 4 / 3,
@@ -304,44 +316,6 @@ class _LowAdminSsNodePageState extends State<LowAdminSsNodePage> {
     );
   }
 
-  Widget _buildDesktopTable() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '节点列表 (共 ${_nodes.length} 个)',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const <DataColumn>[
-                  DataColumn(label: Text('ID')),
-                  DataColumn(label: Text('节点名称')),
-                  DataColumn(label: Text('主机')),
-                  DataColumn(label: Text('端口')),
-                  DataColumn(label: Text('协议')),
-                  DataColumn(label: Text('国家代码')),
-                  DataColumn(label: Text('优先级')),
-                  DataColumn(label: Text('倍率')),
-                  DataColumn(label: Text('等级')),
-                  DataColumn(label: Text('状态')),
-                  DataColumn(label: Text('隐藏')),
-                  DataColumn(label: Text('创建时间')),
-                  DataColumn(label: Text('操作')),
-                ],
-                rows: _nodes.map(_buildRow).toList(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildNodeCard(SsNodeOutput node) {
     return Card(
@@ -437,55 +411,6 @@ class _LowAdminSsNodePageState extends State<LowAdminSsNodePage> {
     );
   }
 
-  DataRow _buildRow(SsNodeOutput node) {
-    final String host = node.nodeConfig.host ?? '-';
-    final String rate = node.nodeRate;
-    final String port = node.nodeConfig.port?.toString() ?? '-';
-    final String countryCode = node.iso3166Code.name.toUpperCase();
-    return DataRow(
-      cells: [
-        DataCell(Text(node.id?.toString() ?? '-')),
-        DataCell(Text(node.nodeName)),
-        DataCell(Text(host)),
-        DataCell(Text(port)),
-        DataCell(Text(node.vpnType.name)),
-        DataCell(Text(countryCode)),
-        DataCell(Text(node.priority.toString())),
-        DataCell(Text(rate)),
-        DataCell(Text(node.nodeLevel.toString())),
-        DataCell(
-          Chip(
-            backgroundColor: node.isEnable
-                ? Colors.green.withValues(alpha: 0.15)
-                : Colors.red.withValues(alpha: 0.15),
-            label: Text(node.isEnable ? '启用' : '禁用'),
-            labelStyle: TextStyle(
-              color: node.isEnable ? Colors.green[700] : Colors.red[700],
-            ),
-          ),
-        ),
-        DataCell(Text(node.isHideNode ? '是' : '否')),
-        DataCell(Text(_formatDateTime(node.createdAt))),
-        DataCell(
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                tooltip: '编辑',
-                icon: const Icon(Icons.edit),
-                onPressed: () => _openNodeForm(node: node),
-              ),
-              IconButton(
-                tooltip: '删除',
-                icon: const Icon(Icons.delete_outline),
-                onPressed: () => _confirmDelete(node),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -493,7 +418,7 @@ class _LowAdminSsNodePageState extends State<LowAdminSsNodePage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Text('节点管理', style: Theme.of(context).textTheme.headlineSmall),
         ),
         _buildFilterRow(),
